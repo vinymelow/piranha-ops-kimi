@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦈 PiranhaOps AIOS v2.0 - Visualização</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0A0A0A 0%, #141414 100%);
+            color: #FFFFFF;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .title { 
+            font-size: 3rem; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #E30613 0%, #FF6B6B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: #9CA3AF; font-size: 1.2rem; }
+        .section { 
+            background: rgba(20, 20, 20, 0.8); 
+            border: 1px solid rgba(45, 45, 45, 0.5);
+            border-radius: 12px; 
+            padding: 30px; 
+            margin-bottom: 30px; 
+            backdrop-filter: blur(10px);
+        }
+        .section-title { color: #E30613; font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; }
+        .feature-list { list-style: none; padding: 0; }
+        .feature-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 0; 
+            border-bottom: 1px solid rgba(45, 45, 45, 0.5);
+        }
+        .feature-icon { 
+            width: 24px; height: 24px; background: #10B981; 
+            border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; margin-right: 12px; font-size: 14px;
+        }
+        .loading-bar { height: 4px; background: rgba(45, 45, 45, 0.5); border-radius: 2px; overflow: hidden; }
+        .loading-progress { 
+            height: 100%; 
+            background: linear-gradient(90deg, #E30613 0%, #FF6B6B 100%);
+            width: 0%; animation: loading 3s ease-in-out infinite;
+        }
+        @keyframes loading { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
+        @keyframes gradient-shift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .success-message { 
+            background: rgba(16, 185, 129, 0.1); 
+            border: 1px solid rgba(16, 185, 129, 0.3); 
+            border-radius: 8px; padding: 20px; 
+            text-align: center; margin-top: 20px;
+        }
+        .code-block { 
+            background: #1F1F1F; border: 1px solid #2D2D2D; 
+            border-radius: 8px; padding: 20px; 
+            font-family: 'JetBrains Mono', monospace; font-size: 14px;
+            margin: 20px 0; overflow-x: auto;
+        }
+        .highlight { color: #E30613; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🦈 PiranhaOps AIOS v2.0</h1>
+            <p class="subtitle">Sistema de Monitoramento B2B com IA</p>
+            <p class="subtitle">Implementação Completa • Design System Piranha</p>
+            <span class="status">✅ Sistema Operacional</span>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🎯 Arquitetura AIOS Completa</h2>
+            <div class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>AIOS Master Agent:</strong> Orquestrador com Quality Gate (85% threshold)
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Squad Commercial:</strong> Cart Recovery Engine com WhatsApp
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Squad Operational:</strong> DHL Automation + Sage X3 ERP
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Squad Intelligence:</strong> Analytics + Predictions
+                </li>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔗 Integrações Reais Implementadas</h2>
+            <div class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Klaviyo MCP:</strong> Data Bridge - Telefone dos clientes
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Shopify MCP:</strong> Webhooks + Customer API
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>WhatsApp Business MCP:</strong> Templates aprovados
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Meta CAPI MCP:</strong> Server-side tracking
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <strong>Sage X3 MCP:</strong> Previsão de estoque
+                </li>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛒 Cart Recovery Engine</h2>
+            <div class="code-block">
+                Shopify Checkout → Klaviyo (telefone) → WhatsApp Template
+                <br>                    ↓
+                <br>Email Fallback (Klaviyo Flow) → Meta CAPI (retargeting)
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🎨 Design System Piranha</h2>
+            <div class="code-block">
+                --piranha-black: #0A0A0A    <span class="highlight">// Fundo principal</span>
+                --piranha-red: #E30613      <span class="highlight">// Cor principal</span>
+                --gradient-text: linear-gradient(135deg, #E30613 0%, #FF6B6B 100%)
+                <br>Cards elevados • Animações suaves • Dark theme completo
+            </div>
+        </div>
+
+        <div class="success-message">
+            <h3>🚀 Sistema Pronto para Deploy!</h3>
+            <p>Execute: <code class="highlight">python dashboard/server.py</code></p>
+            <p>Acesse: <code class="highlight">http://localhost:8080</code></p>
+            <p>Configure webhooks Shopify e comece a recuperar carrinhos!</p>
+        </div>
+    </div>
+</body>
+</html>
