@@ -1,0 +1,384 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-02-21T21:48:21Z",
+  "metadata": {
+    "description": "Base de dados mock para PiranhaOps - Dados simulados de performance",
+    "source": "MetaAdsMock Generator",
+    "scenarios": ["normal", "crisis", "boom"]
+  },
+  "scenarios": {
+    "normal": {
+      "campaigns": [
+        {
+          "id": "campaign_1_7429",
+          "name": "Black Ink Premium - Awareness",
+          "status": "ACTIVE",
+          "objective": "BRAND_AWARENESS",
+          "spend": 145.5,
+          "impressions": 18500,
+          "clicks": 222,
+          "conversions": 8,
+          "roas": 3.2,
+          "cpc": 0.65,
+          "ctr": 1.2,
+          "cpm": 7.86,
+          "purchase_roas": 2.8,
+          "cost_per_conversion": 18.19,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_2_8531",
+          "name": "Needles Pro Kit - Conversion",
+          "status": "ACTIVE",
+          "objective": "CONVERSIONS",
+          "spend": 198.75,
+          "impressions": 16500,
+          "clicks": 297,
+          "conversions": 12,
+          "roas": 4.1,
+          "cpc": 0.67,
+          "ctr": 1.8,
+          "cpm": 12.05,
+          "purchase_roas": 3.9,
+          "cost_per_conversion": 16.56,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_3_6274",
+          "name": "Tattoo Machines - Retargeting",
+          "status": "ACTIVE",
+          "objective": "CONVERSIONS",
+          "spend": 175.2,
+          "impressions": 14200,
+          "clicks": 241,
+          "conversions": 9,
+          "roas": 3.8,
+          "cpc": 0.73,
+          "ctr": 1.7,
+          "cpm": 12.34,
+          "purchase_roas": 3.5,
+          "cost_per_conversion": 19.47,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        }
+      ],
+      "summary": {
+        "total_campaigns": 3,
+        "total_spend": 519.45,
+        "total_impressions": 49200,
+        "total_clicks": 760,
+        "total_conversions": 29,
+        "avg_roas": 3.7,
+        "avg_ctr": 1.57,
+        "avg_cpc": 0.68,
+        "avg_cpm": 10.75
+      },
+      "trends": {
+        "avg_roas": 3.7,
+        "avg_ctr": 1.57,
+        "total_spend": 519.45,
+        "roas_outliers": 0,
+        "ctr_outliers": 0,
+        "best_performer": "Needles Pro Kit - Conversion",
+        "worst_performer": "Black Ink Premium - Awareness",
+        "highest_spend": "Needles Pro Kit - Conversion"
+      },
+      "issues": [],
+      "recommendations": [
+        "Manter campanhas com ROAS > 4.0",
+        "Testar aumento de 20% no budget da campanha 'Needles Pro Kit'",
+        "Monitorar CTR da campanha 'Black Ink Premium' nas próximas 24h"
+      ]
+    },
+    "crisis": {
+      "campaigns": [
+        {
+          "id": "campaign_1_7429",
+          "name": "Black Ink Premium - Awareness [CRITICAL TEST]",
+          "status": "ACTIVE",
+          "objective": "BRAND_AWARENESS",
+          "spend": 450.0,
+          "impressions": 52000,
+          "clicks": 156,
+          "conversions": 3,
+          "roas": 1.2,
+          "cpc": 2.88,
+          "ctr": 0.3,
+          "cpm": 8.65,
+          "purchase_roas": 0.8,
+          "cost_per_conversion": 150.0,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_2_8531",
+          "name": "Needles Pro Kit - Conversion",
+          "status": "PAUSED",
+          "objective": "CONVERSIONS",
+          "spend": 89.25,
+          "impressions": 8500,
+          "clicks": 68,
+          "conversions": 1,
+          "roas": 1.8,
+          "cpc": 1.31,
+          "ctr": 0.8,
+          "cpm": 10.5,
+          "purchase_roas": 1.5,
+          "cost_per_conversion": 89.25,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_3_6274",
+          "name": "Tattoo Machines - Retargeting",
+          "status": "ACTIVE",
+          "objective": "CONVERSIONS",
+          "spend": 234.8,
+          "impressions": 18900,
+          "clicks": 151,
+          "conversions": 2,
+          "roas": 1.5,
+          "cpc": 1.56,
+          "ctr": 0.8,
+          "cpm": 12.42,
+          "purchase_roas": 1.2,
+          "cost_per_conversion": 117.4,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        }
+      ],
+      "summary": {
+        "total_campaigns": 3,
+        "total_spend": 774.05,
+        "total_impressions": 79400,
+        "total_clicks": 375,
+        "total_conversions": 6,
+        "avg_roas": 1.5,
+        "avg_ctr": 0.63,
+        "avg_cpc": 2.06,
+        "avg_cpm": 10.52
+      },
+      "trends": {
+        "avg_roas": 1.5,
+        "avg_ctr": 0.63,
+        "total_spend": 774.05,
+        "roas_outliers": 1,
+        "ctr_outliers": 2,
+        "best_performer": "Needles Pro Kit - Conversion",
+        "worst_performer": "Black Ink Premium - Awareness [CRITICAL TEST]",
+        "highest_spend": "Black Ink Premium - Awareness [CRITICAL TEST]"
+      },
+      "issues": [
+        {
+          "campaign": "Black Ink Premium - Awareness [CRITICAL TEST]",
+          "issue": "ROAS_BAIXO",
+          "value": 1.2,
+          "threshold": 2.0,
+          "severity": "HIGH"
+        },
+        {
+          "campaign": "Black Ink Premium - Awareness [CRITICAL TEST]",
+          "issue": "CTR_BAIXO",
+          "value": 0.3,
+          "threshold": 1.0,
+          "severity": "HIGH"
+        },
+        {
+          "campaign": "Black Ink Premium - Awareness [CRITICAL TEST]",
+          "issue": "CPC_ALTO",
+          "value": 2.88,
+          "threshold": 1.5,
+          "severity": "HIGH"
+        },
+        {
+          "campaign": "Needles Pro Kit - Conversion",
+          "issue": "ROAS_BAIXO",
+          "value": 1.8,
+          "threshold": 2.0,
+          "severity": "MEDIUM"
+        },
+        {
+          "campaign": "Tattoo Machines - Retargeting",
+          "issue": "ROAS_BAIXO",
+          "value": 1.5,
+          "threshold": 2.0,
+          "severity": "MEDIUM"
+        }
+      ],
+      "recommendations": [
+        "Revisar 3 campanhas com ROAS abaixo de 2.0x",
+        "Otimizar criativos das 2 campanhas com CTR < 1%",
+        "Ajustar segmentação das 1 campanhas com CPC > $1.50",
+        "Pausar campanha 'Black Ink Premium' imediatamente",
+        "Redistribuir budget para campanhas com ROAS > 2.5"
+      ]
+    },
+    "boom": {
+      "campaigns": [
+        {
+          "id": "campaign_1_7429",
+          "name": "Black Ink Premium - Awareness",
+          "status": "ACTIVE",
+          "objective": "BRAND_AWARENESS",
+          "spend": 285.75,
+          "impressions": 28500,
+          "clicks": 598,
+          "conversions": 28,
+          "roas": 5.8,
+          "cpc": 0.48,
+          "ctr": 2.1,
+          "cpm": 10.03,
+          "purchase_roas": 5.2,
+          "cost_per_conversion": 10.21,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_2_8531",
+          "name": "Needles Pro Kit - Conversion",
+          "status": "ACTIVE",
+          "objective": "CONVERSIONS",
+          "spend": 396.0,
+          "impressions": 24800,
+          "clicks": 620,
+          "conversions": 42,
+          "roas": 6.2,
+          "cpc": 0.64,
+          "ctr": 2.5,
+          "cpm": 15.97,
+          "purchase_roas": 5.9,
+          "cost_per_conversion": 9.43,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        },
+        {
+          "id": "campaign_3_6274",
+          "name": "Tattoo Machines - Retargeting",
+          "status": "ACTIVE",
+          "objective": "CONVERSIONS",
+          "spend": 312.6,
+          "impressions": 19800,
+          "clicks": 495,
+          "conversions": 32,
+          "roas": 5.5,
+          "cpc": 0.63,
+          "ctr": 2.5,
+          "cpm": 15.79,
+          "purchase_roas": 5.1,
+          "cost_per_conversion": 9.77,
+          "date_start": "2025-02-14",
+          "date_stop": "2025-02-21"
+        }
+      ],
+      "summary": {
+        "total_campaigns": 3,
+        "total_spend": 994.35,
+        "total_impressions": 73100,
+        "total_clicks": 1713,
+        "total_conversions": 102,
+        "avg_roas": 5.83,
+        "avg_ctr": 2.37,
+        "avg_cpc": 0.58,
+        "avg_cpm": 13.93
+      },
+      "trends": {
+        "avg_roas": 5.83,
+        "avg_ctr": 2.37,
+        "total_spend": 994.35,
+        "roas_outliers": 0,
+        "ctr_outliers": 0,
+        "best_performer": "Needles Pro Kit - Conversion",
+        "worst_performer": "Tattoo Machines - Retargeting",
+        "highest_spend": "Needles Pro Kit - Conversion"
+      },
+      "issues": [],
+      "recommendations": [
+        "Performance excelente - considerar aumentar budget em 30%",
+        "Escalar campanha 'Needles Pro Kit' para novos públicos",
+        "Testar lookalike audiences baseadas em conversões",
+        "Aumentar lances nas campanhas mais rentáveis"
+      ]
+    }
+  },
+  "benchmarks": {
+    "b2b_ecommerce": {
+      "roas": {
+        "excellent": 4.0,
+        "good": 3.0,
+        "acceptable": 2.5,
+        "poor": 2.0
+      },
+      "ctr": {
+        "excellent": 2.0,
+        "good": 1.5,
+        "acceptable": 1.0,
+        "poor": 0.5
+      },
+      "cpc": {
+        "excellent": 0.5,
+        "good": 0.8,
+        "acceptable": 1.2,
+        "poor": 1.5
+      },
+      "cpm": {
+        "low": 8.0,
+        "average": 12.0,
+        "high": 16.0,
+        "very_high": 20.0
+      }
+    }
+  },
+  "historical_data": {
+    "daily_metrics": [
+      {
+        "date": "2025-02-21",
+        "total_spend": 145.5,
+        "total_impressions": 18500,
+        "total_clicks": 222,
+        "total_conversions": 8,
+        "avg_roas": 3.2,
+        "avg_ctr": 1.2
+      },
+      {
+        "date": "2025-02-20",
+        "total_spend": 132.3,
+        "total_impressions": 16800,
+        "total_clicks": 201,
+        "total_conversions": 7,
+        "avg_roas": 3.1,
+        "avg_ctr": 1.2
+      },
+      {
+        "date": "2025-02-19",
+        "total_spend": 158.7,
+        "total_impressions": 19200,
+        "total_clicks": 245,
+        "total_conversions": 9,
+        "avg_roas": 3.4,
+        "avg_ctr": 1.3
+      }
+    ]
+  },
+  "alerts_history": [
+    {
+      "timestamp": "2025-02-21T15:30:00Z",
+      "level": "MEDIUM",
+      "campaign": "Black Ink Premium - Awareness",
+      "issue": "CTR abaixo do esperado",
+      "current_value": 1.1,
+      "threshold": 1.5,
+      "action_taken": "Ajustado segmentação de público"
+    },
+    {
+      "timestamp": "2025-02-20T09:15:00Z",
+      "level": "HIGH",
+      "campaign": "Needles Pro Kit - Conversion",
+      "issue": "CPC aumentou 40%",
+      "current_value": 0.92,
+      "threshold": 0.7,
+      "action_taken": "Reduzido lance manualmente"
+    }
+  ]
+}

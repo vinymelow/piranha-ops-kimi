@@ -1,0 +1,72 @@
+# PiranhaOps - Arquivos ignorados pelo Git
+
+# Configurações sensíveis
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+piranha_ops.log
+logs/
+cycle_*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dados locais (sensíveis)
+data/*.json
+!data/mock_database.json
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Test coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json

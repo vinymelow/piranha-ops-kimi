@@ -1,0 +1,20 @@
+# PiranhaOps - Dependências
+# Versão mínima necessária para funcionamento
+
+# API e Integrações
+openai>=1.12.0          # Cliente OpenAI compatível (para Moonshot)
+requests>=2.31.0        # Requisições HTTP
+
+# Configurações e Ambiente  
+python-dotenv>=1.0.0    # Carregar variáveis de ambiente
+
+# Agendamento e Monitoramento
+schedule>=1.2.0         # Agendamento de tarefas
+
+# Opcionais (para produção)
+# slack-sdk>=3.21.0     # Integração Slack (quando configurar)
+# shopify-api>=12.0.0   # API Shopify (quando tiver acesso)
+
+# Desenvolvimento e Testes
+pytest>=7.4.0           # Framework de testes (opcional)
+pytest-cov>=4.1.0       # Cobertura de testes (opcional)
