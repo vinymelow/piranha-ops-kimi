@@ -2,6 +2,7 @@
 """
 Dashboard Executive v3.0 - Interface Web em Tempo Real
 Visualização por Squads e Métricas Estratégicas com atualização de horário
+Seguindo especificações do prompt estratégico completo
 """
 
 from flask import Flask, render_template, jsonify, request
@@ -22,13 +23,15 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
 
-# Importar métricas
+# Importar configurações e métricas
 import sys
 sys.path.append('..')
+from config.settings import Settings
 from config.metrics_library import (
     ALL_METRICS, MetricTier, MetricPhase, 
     get_executive_summary, get_metrics_by_phase,
-    get_current_value
+    get_current_value, generate_metric_summary,
+    alert_system
 )
 
 class ExecutiveDashboard:
@@ -259,15 +262,10 @@ def executive_summary():
     dashboard.update_realtime_metrics()
     
     # Obter métricas classificadas
-    metrics_status = get_executive_summary()
+    metrics_summary = generate_metric_summary()
     
     # Progresso por fase
-    phase_progress = {
-        "revenue_activation": {"score": 75, "critical": 0, "healthy": 2, "status": "on_track"},
-        "wholesale_engine": {"score": 82, "critical": 0, "healthy": 2, "status": "ahead"},
-        "operational_lib": {"score": 45, "critical": 1, "healthy": 0, "status": "delayed"},
-        "compliance": {"score": 20, "critical": 0, "healthy": 0, "status": "not_started"}
-    }
+    phase_progress = get_phase_progress()
     
     # Recomendações baseadas em análise
     recommendations = [
@@ -289,11 +287,17 @@ def executive_summary():
     
     return jsonify({
         "timestamp": datetime.now().isoformat(),
-        "overall_health": 68.5,
-        "metrics_by_tier": metrics_status,
+        "overall_health": metrics_summary["overall_health_score"],
+        "metrics_by_tier": get_executive_summary(),
         "phase_progress": phase_progress,
         "recommendations": recommendations,
-        "next_review": (datetime.now() + timedelta(hours=1)).isoformat()
+        "next_review": (datetime.now() + timedelta(hours=1)).isoformat(),
+        "system_status": {
+            "state": "operational",
+            "version": "3.0",
+            "uptime": "99.9%",
+            "last_metrics_update": datetime.now().isoformat()
+        }
     })
 
 @app.route('/api/squad/<squad_name>/status')
@@ -309,7 +313,7 @@ def squad_status(squad_name):
     # Adicionar métricas do squad
     squad_metrics = []
     if squad_name == "commercial":
-        metrics_ids = ["cart_recovery_rate", "cart_recovery_revenue_eur", "new_studios_per_week"]
+        metrics_ids = ["cart_recovery_rate", "cart_recovery_revenue_eur", "new_studios_per_week", "lead_response_time_minutes"]
     elif squad_name == "wholesale":
         metrics_ids = ["partner_conversion_rate", "wholesale_ltv_growth", "tier_upgrade_rate"]
     else:
@@ -428,12 +432,36 @@ def add_squad_activity(squad_name):
     
     return jsonify({"status": "success"})
 
+# WebSocket para atualizações em tempo real
+@socketio.on('subscribe_metrics')
+def handle_subscribe_metrics():
+    """Cliente se inscreve para atualizações de métricas"""
+    def send_updates():
+        while True:
+            socketio.sleep(5)  # Atualiza a cada 5 segundos
+            
+            # Coletar dados atualizados
+            summary = generate_metric_summary()
+            squad_status = ExecutiveDashboard().get_squad_status()
+            
+            data = {
+                "metrics_summary": summary,
+                "squad_status": squad_status,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            socketio.emit('metrics_update', data)
+    
+    # Iniciar thread para enviar atualizações
+    thread = threading.Thread(target=send_updates, daemon=True)
+    thread.start()
+
 if __name__ == '__main__':
     print("\n" + "="*60)
     print("🦈 PIRANHAOPS AIOS v3.0 - DASHBOARD EXECUTIVO")
     print("="*60)
-    print("🔗 Dashboard: http://localhost:8083")
-    print("📡 API Status: http://localhost:8083/api/executive-summary")
+    print("🔗 URL: http://localhost:8083")
+    print("📡 API: http://localhost:8083/api/executive-summary")
     print("🎯 Squad Status: http://localhost:8083/api/squad/commercial/status")
     print("📊 Métricas: http://localhost:8083/api/metrics/cart_recovery_rate/history")
     print("="*60)
@@ -442,5 +470,6 @@ if __name__ == '__main__':
     print("   • Métricas estratégicas classificadas automaticamente")
     print("   • Atualização de horário automática")
     print("   • Interface responsiva com Design System Piranha")
+    print("   • WebSocket para atualizações em tempo real")
     
     app.run(debug=True, port=8083, host='0.0.0.0')

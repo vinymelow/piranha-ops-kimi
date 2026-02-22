@@ -97,24 +97,6 @@
         "horizon_days": 14,
         "min_confidence": 0.85
       }
-    },
-    "slack_commands": {
-      "command": "python",
-      "args": ["-m", "mcp_servers.slack_mcp"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
-        "SLACK_CHANNEL_OPS": "${SLACK_CHANNEL_OPS}"
-      },
-      "tools": [
-        "send_alert",
-        "send_metric_report",
-        "command_status"
-      ],
-      "alerts": {
-        "critical_metrics": true,
-        "daily_digest": true,
-        "squad_status": true
-      }
     }
   },
   "aios_config": {

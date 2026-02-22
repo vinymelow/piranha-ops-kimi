@@ -2,6 +2,7 @@
 """
 PiranhaOps AIOS v3.0 - Startup Script
 Inicializa sistema completo com verificações de saúde e auto-configuração
+Seguindo especificações do prompt estratégico completo
 """
 
 import asyncio
@@ -200,8 +201,7 @@ SAGE_X3_API_URL=https://sage.piranhaglobal.com/api
 SAGE_X3_API_KEY=your_sage_key
 
 # Slack/Teams (verificar qual plataforma empresa usa)
-SLACK_BOT_TOKEN=xoxb-your-bot-token
-SLACK_CHANNEL_OPS=#sales-ops
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 
 # Configurações AIOS
 AIOS_QUALITY_THRESHOLD=0.85
@@ -232,7 +232,8 @@ BUDGET_MONTHLY_EUR=37
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 access_count INTEGER DEFAULT 0,
-                last_accessed TIMESTAMP
+                last_accessed TIMESTAMP,
+                expiration_date TIMESTAMP
             )
         """)
         
@@ -427,60 +428,13 @@ BUDGET_MONTHLY_EUR=37
     --info: #3B82F6;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--piranha-black);
-    color: var(--text-primary);
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
-
-/* Header */
-.header-glass {
-    background: rgba(20, 20, 20, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(227, 6, 19, 0.2);
-    padding: 16px 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.logo-piranha {
-    font-size: 32px;
-    filter: drop-shadow(0 0 10px rgba(227, 6, 19, 0.5));
-}
-
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.status-healthy {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-/* Metric Cards */
+/* Glass Effect Cards */
 .metric-card {
     background: linear-gradient(135deg, var(--piranha-dark) 0%, var(--piranha-gray) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 24px;
+    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
 }
 
@@ -489,36 +443,13 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-.metric-value {
-    font-size: 36px;
-    font-weight: 900;
-    margin-bottom: 8px;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    transition: width 0.5s ease;
-}
-
 /* Squad Cards */
 .squad-card {
-    background: var(--piranha-dark);
+    background: linear-gradient(135deg, var(--piranha-dark) 0%, rgba(227, 6, 19, 0.05) 100%);
     border: 1px solid rgba(227, 6, 19, 0.2);
     border-radius: 12px;
     padding: 24px;
-    transition: all 0.3s;
-}
-
-.squad-card:hover {
-    border-color: rgba(227, 6, 19, 0.4);
+    backdrop-filter: blur(10px);
 }
 
 .agent-badge {
@@ -529,28 +460,41 @@ body {
     font-size: 12px;
 }
 
-/* Activity Feed */
-.activity-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* Progress Bars */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-.activity-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-secondary);
-    min-width: 50px;
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--piranha-red) 0%, #FF6B6B 100%);
+    transition: width 0.5s ease;
 }
 
-.activity-squad {
-    color: var(--piranha-red);
-    font-weight: 500;
+/* Animations */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 1.5s infinite;
 }
 """
         
-        css_file = Path("dashboard/static/css/design_system.css")
+        css_file = Path("dashboard/static/css/piranha-theme.css")
+        css_file.parent.mkdir(parents=True, exist_ok=True)
         css_file.write_text(css_content)
         
         return "Arquivos do dashboard criados"

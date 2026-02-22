@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦈 PiranhaOps AIOS v3.0 - Executive Dashboard</title>
     <style>
-        /* Design System Piranha v3.0 */
+        /* Design System Piranha v3.0 - Especificações do Prompt Estratégico */
         :root {
             --piranha-black: #0A0A0A;
             --piranha-dark: #141414;
@@ -41,7 +41,7 @@
             padding: 0 24px;
         }
 
-        /* Header */
+        /* Header - Glass Effect */
         .header-glass {
             background: rgba(20, 20, 20, 0.9);
             backdrop-filter: blur(12px);
@@ -50,6 +50,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all 0.3s ease;
         }
 
         .status-bar {
@@ -73,11 +74,10 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
             color: var(--text-secondary);
-        }
-
-        /* Main Content */
-        main {
-            padding: 32px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         /* Section Headers */
@@ -87,6 +87,7 @@
             color: var(--piranha-red);
             margin-bottom: 24px;
             position: relative;
+            display: inline-block;
         }
 
         .section-title::after {
@@ -100,7 +101,7 @@
             border-radius: 2px;
         }
 
-        /* Metric Cards */
+        /* Metric Cards - Glass Effect */
         .metric-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -116,6 +117,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .metric-card:hover {
@@ -210,7 +212,7 @@
             100% { left: 100%; }
         }
 
-        /* Squad Cards */
+        /* Squad Cards - Glass Effect */
         .squad-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -224,6 +226,7 @@
             border-radius: 12px;
             padding: 24px;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .squad-card:hover {
@@ -450,10 +453,41 @@
         .fade-in {
             animation: fadeInUp 0.6s ease-out;
         }
+
+        /* Phase Cards */
+        .phase-card {
+            background: var(--piranha-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .phase-card:hover {
+            border-color: rgba(227, 6, 19, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .phase-ontrack {
+            border-top: 3px solid var(--success);
+        }
+
+        .phase-ahead {
+            border-top: 3px solid var(--info);
+        }
+
+        .phase-delayed {
+            border-top: 3px solid var(--warning);
+        }
+
+        .phase-notstarted {
+            border-top: 3px solid var(--text-secondary);
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header - Glass Effect -->
     <header class="header-glass">
         <div class="container">
             <div class="status-bar">
@@ -461,7 +495,7 @@
                     <div class="logo-piranha">🦈</div>
                     <div>
                         <h1 style="font-size: 24px; font-weight: bold; color: var(--piranha-red); margin: 0;">PiranhaOps AIOS v3.0</h1>
-                        <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">Sales Operations Command Center</p>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">Executive Dashboard</p>
                     </div>
                 </div>
                 <div class="time-display" id="current-time">
@@ -476,7 +510,7 @@
         
         <!-- Executive Summary Cards -->
         <section class="mb-8">
-            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📊 Resumo Executivo</h2>
+            <h2 class="section-title">📊 Resumo Executivo</h2>
             <div class="metric-grid" id="executive-summary">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -487,7 +521,7 @@
 
         <!-- Phase Progress -->
         <section class="mb-8">
-            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📈 Progresso por Fase (Roadmap Teresa)</h2>
+            <h2 class="section-title">📈 Progresso por Fase (Roadmap Teresa)</h2>
             <div id="phase-progress">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -498,7 +532,7 @@
 
         <!-- Squads Status -->
         <section class="mb-8">
-            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">🤖 Squads Ativos (AIOS)</h2>
+            <h2 class="section-title">🤖 Squads Ativos (AIOS)</h2>
             <div id="squad-status">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -508,8 +542,8 @@
         </section>
 
         <!-- Activity Feed -->
-        <section style="background: var(--piranha-dark); border-radius: 12px; padding: 24px; border: 1px solid rgba(255, 255, 255, 0.05);">
-            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📡 Atividades em Tempo Real</h2>
+        <section class="activity-feed">
+            <h2 class="section-title">📡 Atividades em Tempo Real</h2>
             <div id="activity-feed">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -521,12 +555,12 @@
     </main>
 
     <!-- Update Button -->
-    <button id="update-dashboard" style="position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--piranha-red) 0%, #FF6B6B 100%); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 16px rgba(227, 6, 19, 0.3); transition: all 0.3s; z-index: 1000;">
+    <button id="update-dashboard" title="Atualizar Dashboard">
         🔄 Atualizar Agora
     </button>
 
     <script>
-        // Dashboard Controller
+        // Dashboard Controller - Implementação Completa
         class ExecutiveDashboard {
             constructor() {
                 this.updateInterval = 30000; // 30 segundos
@@ -642,7 +676,7 @@
                 };
 
                 container.innerHTML = phaseData.map(phase => `
-                    <div class="phase-card" style="border-top: 3px solid var(--${statusColors[phase.status]});">
+                    <div class="phase-card phase-${phase.status}">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                             <span style="font-weight: 600;">${phase.name}</span>
                             <span style="font-size: 24px; font-weight: 900; color: var(--piranha-red);">${phase.progress}%</span>

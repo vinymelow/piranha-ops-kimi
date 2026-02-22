@@ -2,11 +2,13 @@
 """
 Biblioteca de Métricas B2B com Classificação Automática
 Baseado em benchmarks 2024/2025 para B2B Tattoo Supplies
+Especificações do prompt estratégico completo
 """
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional, Dict, List
+from datetime import datetime
 
 class MetricTier(Enum):
     CRITICAL = "critical"      # 🚨 Vermelho - Ação imediata
@@ -43,8 +45,12 @@ class MetricThreshold:
             return MetricTier.OPTIMIZATION
         return MetricTier.WARNING
 
-# MÉTRICAS FASE 1: REVENUE ACTIVATION (0-30 dias)
+# ============================================================
+# MÉTRICAS FASE 1: REVENUE ACTIVATION (0-30 dias) - PRIORIDADE MÁXIMA
+# ============================================================
+
 REVENUE_METRICS = {
+    # Cart Recovery Engine - Principal KPI
     "cart_recovery_rate": MetricThreshold(
         critical_below=0.05,      # <5% é crítico (indústria: 10-15%)
         warning_below=0.08,       # 5-8% atenção
@@ -53,6 +59,7 @@ REVENUE_METRICS = {
         target=0.10,
         unit="percentage"
     ),
+    
     "cart_recovery_revenue_eur": MetricThreshold(
         critical_below=1000,
         warning_below=2500,
@@ -61,6 +68,8 @@ REVENUE_METRICS = {
         target=3000,
         unit="EUR"
     ),
+    
+    # Lead Generation - Novos estúdios
     "new_studios_per_week": MetricThreshold(
         critical_below=10,
         warning_below=25,
@@ -69,6 +78,7 @@ REVENUE_METRICS = {
         target=30,
         unit="count"
     ),
+    
     "studio_to_lead_conversion": MetricThreshold(
         critical_below=0.15,
         warning_below=0.20,
@@ -77,6 +87,8 @@ REVENUE_METRICS = {
         target=0.25,
         unit="percentage"
     ),
+    
+    # Stock Management - Prevenção de ruptura
     "stockout_prediction_accuracy": MetricThreshold(
         critical_below=0.70,
         warning_below=0.80,
@@ -85,6 +97,7 @@ REVENUE_METRICS = {
         target=0.85,
         unit="percentage"
     ),
+    
     "stockout_prevented_value_eur": MetricThreshold(
         critical_below=5000,
         warning_below=10000,
@@ -93,6 +106,7 @@ REVENUE_METRICS = {
         target=15000,
         unit="EUR"
     ),
+    
     "reorder_frequency_increase": MetricThreshold(
         critical_below=1.0,  # Sem aumento
         warning_below=1.1,
@@ -101,6 +115,8 @@ REVENUE_METRICS = {
         target=1.2,
         unit="ratio"
     ),
+    
+    # Response Time - Velocidade de resposta
     "lead_response_time_minutes": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -112,7 +128,10 @@ REVENUE_METRICS = {
     )
 }
 
+# ============================================================
 # MÉTRICAS FASE 2: WHOLESALE ENGINE (30-60 dias)
+# ============================================================
+
 WHOLESALE_METRICS = {
     "partner_application_time_hours": MetricThreshold(
         critical_below=None,
@@ -122,6 +141,7 @@ WHOLESALE_METRICS = {
         target=2,
         unit="hours"
     ),
+    
     "partner_conversion_rate": MetricThreshold(
         critical_below=0.20,
         warning_below=0.30,
@@ -130,6 +150,7 @@ WHOLESALE_METRICS = {
         target=0.40,
         unit="percentage"
     ),
+    
     "wholesale_ltv_growth": MetricThreshold(
         critical_below=1.0,
         warning_below=1.2,
@@ -138,6 +159,7 @@ WHOLESALE_METRICS = {
         target=1.3,
         unit="ratio"
     ),
+    
     "wholesale_purchase_frequency_monthly": MetricThreshold(
         critical_below=2,
         warning_below=3,
@@ -146,6 +168,7 @@ WHOLESALE_METRICS = {
         target=4,
         unit="count"
     ),
+    
     "tier_upgrade_rate": MetricThreshold(
         critical_below=0.05,
         warning_below=0.10,
@@ -156,7 +179,10 @@ WHOLESALE_METRICS = {
     )
 }
 
+# ============================================================
 # MÉTRICAS FASE 3: OPERATIONAL LIBERATION (60-90 dias)
+# ============================================================
+
 OPERATIONAL_METRICS = {
     "dhl_processing_time_minutes": MetricThreshold(
         critical_below=None,
@@ -166,6 +192,7 @@ OPERATIONAL_METRICS = {
         target=2,
         unit="minutes"
     ),
+    
     "shipping_error_rate": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -174,6 +201,7 @@ OPERATIONAL_METRICS = {
         target=0.005,
         unit="percentage"
     ),
+    
     "cod_processing_time_minutes": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -182,6 +210,7 @@ OPERATIONAL_METRICS = {
         target=5,
         unit="minutes"
     ),
+    
     "cod_reconciliation_accuracy": MetricThreshold(
         critical_below=0.95,
         warning_below=0.98,
@@ -190,6 +219,7 @@ OPERATIONAL_METRICS = {
         target=0.99,
         unit="percentage"
     ),
+    
     "team_time_saved_hours_monthly": MetricThreshold(
         critical_below=20,
         warning_below=40,
@@ -198,6 +228,7 @@ OPERATIONAL_METRICS = {
         target=60,
         unit="hours"
     ),
+    
     "manual_work_reduction_percentage": MetricThreshold(
         critical_below=0.10,
         warning_below=0.20,
@@ -208,7 +239,10 @@ OPERATIONAL_METRICS = {
     )
 }
 
+# ============================================================
 # MÉTRICAS FASE 4: COMPLIANCE (90-120 dias)
+# ============================================================
+
 COMPLIANCE_METRICS = {
     "infarmed_reporting_time_minutes": MetricThreshold(
         critical_below=None,
@@ -218,6 +252,7 @@ COMPLIANCE_METRICS = {
         target=15,
         unit="minutes"
     ),
+    
     "compliance_error_rate": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -226,6 +261,7 @@ COMPLIANCE_METRICS = {
         target=0.0,
         unit="percentage"
     ),
+    
     "rma_resolution_time_hours": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -234,6 +270,7 @@ COMPLIANCE_METRICS = {
         target=48,
         unit="hours"
     ),
+    
     "rma_satisfaction_score": MetricThreshold(
         critical_below=3.5,
         warning_below=4.0,
@@ -242,6 +279,7 @@ COMPLIANCE_METRICS = {
         target=4.0,
         unit="score"
     ),
+    
     "bank_reconciliation_time_minutes": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -250,6 +288,7 @@ COMPLIANCE_METRICS = {
         target=60,
         unit="minutes"
     ),
+    
     "financial_error_rate": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -260,8 +299,12 @@ COMPLIANCE_METRICS = {
     )
 }
 
-# MÉTRICAS ESTRATÉGICAS (Cross-Phase)
+# ============================================================
+# MÉTRICAS ESTRATÉGICAS (Cross-Phase) - CRÍTICAS PARA CEO/TERESA
+# ============================================================
+
 STRATEGIC_METRICS = {
+    # CAC e LTV - Sustentabilidade Financeira
     "customer_acquisition_cost_eur": MetricThreshold(
         critical_below=None,
         warning_below=None,
@@ -270,6 +313,7 @@ STRATEGIC_METRICS = {
         target=100,
         unit="EUR"
     ),
+    
     "ltv_cac_ratio": MetricThreshold(
         critical_below=3.0,       # <3:1 insustentável
         warning_below=3.5,
@@ -278,6 +322,8 @@ STRATEGIC_METRICS = {
         target=4.0,
         unit="ratio"
     ),
+    
+    # Sales Velocity - Velocidade de vendas
     "sales_velocity_eur_per_day": MetricThreshold(
         critical_below=1000,
         warning_below=2000,
@@ -286,6 +332,7 @@ STRATEGIC_METRICS = {
         target=3000,
         unit="EUR"
     ),
+    
     "pipeline_coverage_ratio": MetricThreshold(
         critical_below=3.0,
         warning_below=4.0,
@@ -294,6 +341,8 @@ STRATEGIC_METRICS = {
         target=4.0,
         unit="ratio"
     ),
+    
+    # Forecasting - Precisão de previsões
     "forecast_accuracy_percentage": MetricThreshold(
         critical_below=0.70,
         warning_below=0.80,
@@ -302,6 +351,7 @@ STRATEGIC_METRICS = {
         target=0.85,
         unit="percentage"
     ),
+    
     "b2b_win_rate": MetricThreshold(
         critical_below=0.15,
         warning_below=0.20,
@@ -312,7 +362,10 @@ STRATEGIC_METRICS = {
     )
 }
 
-# Agregar todas
+# ============================================================
+# AGREGAR TODAS AS MÉTRICAS
+# ============================================================
+
 ALL_METRICS = {
     **REVENUE_METRICS,
     **WHOLESALE_METRICS,
@@ -321,7 +374,10 @@ ALL_METRICS = {
     **STRATEGIC_METRICS
 }
 
+# ============================================================
 # FUNÇÕES ÚTEIS PARA DASHBOARD
+# ============================================================
+
 def get_metrics_by_phase(phase: MetricPhase) -> Dict[str, MetricThreshold]:
     """Retorna métricas por fase do roadmap"""
     phase_map = {
@@ -339,14 +395,26 @@ def get_metrics_by_tier(tier: MetricTier) -> Dict[str, MetricThreshold]:
 
 def get_current_value(metric_id: str) -> float:
     """Simula valor atual da métrica (em produção: busca do banco)"""
-    # Valores simulados baseados em targets
+    # Valores simulados baseados em targets com variação realista
     threshold = ALL_METRICS.get(metric_id)
     if not threshold:
         return 0.0
     
-    # Simula valor próximo do target com variação
+    # Simula valor próximo do target com variação realista
     import random
-    variation = random.uniform(0.8, 1.1)  # ±20%
+    variation = random.uniform(0.8, 1.2)  # ±20% variação
+    
+    # Valores específicos por métrica para realismo
+    if metric_id == "cart_recovery_rate":
+        return 0.185  # 18.5% - próximo do target de 20%
+    elif metric_id == "cart_recovery_revenue_eur":
+        return 4250  # €4.250 - próximo do target
+    elif metric_id == "ltv_cac_ratio":
+        return 2.8  # 2.8:1 - abaixo do target crítico de 4.0
+    elif metric_id == "new_studios_per_week":
+        return 35  # 35 studios - acima do target
+    
+    # Valor genérico
     return threshold.target * variation
 
 def get_executive_summary() -> Dict:
@@ -385,3 +453,170 @@ def get_phase_from_metric(metric_id: str) -> str:
         return "Fase 4: Compliance"
     else:
         return "Estratégico"
+
+def validate_metric_value(metric_id: str, value: float) -> bool:
+    """Valida se um valor de métrica é válido"""
+    if metric_id not in ALL_METRICS:
+        return False
+    
+    threshold = ALL_METRICS[metric_id]
+    
+    # Validações por tipo de unidade
+    if threshold.unit == "percentage":
+        return 0 <= value <= 1
+    elif threshold.unit == "ratio":
+        return value > 0
+    elif threshold.unit == "EUR":
+        return value >= 0
+    elif threshold.unit == "count":
+        return value >= 0
+    elif threshold.unit == "minutes":
+        return value >= 0
+    elif threshold.unit == "hours":
+        return value >= 0
+    elif threshold.unit == "score":
+        return 0 <= value <= 5
+    
+    return True
+
+# ============================================================
+# SISTEMA DE ALERTAS INTELIGENTES
+# ============================================================
+
+class AlertSystem:
+    """Sistema de alertas baseado em mudanças de tier"""
+    
+    def __init__(self):
+        self.alert_history = []
+        self.subscribers = []
+    
+    def check_metrics_and_alert(self, current_values: Dict[str, float]) -> List[Dict]:
+        """Verifica métricas e gera alertas se tier mudou"""
+        alerts = []
+        
+        for metric_id, current_value in current_values.items():
+            if metric_id not in ALL_METRICS:
+                continue
+                
+            threshold = ALL_METRICS[metric_id]
+            current_tier = threshold.classify(current_value)
+            
+            # Verificar se houve mudança de tier (comparar com histórico)
+            last_tier = self._get_last_tier(metric_id)
+            
+            if current_tier != last_tier:
+                alert = {
+                    "metric_id": metric_id,
+                    "metric_name": metric_id.replace("_", " ").title(),
+                    "old_tier": last_tier.value,
+                    "new_tier": current_tier.value,
+                    "current_value": current_value,
+                    "target": threshold.target,
+                    "timestamp": datetime.now().isoformat(),
+                    "priority": self._get_alert_priority(current_tier, last_tier)
+                }
+                
+                alerts.append(alert)
+                self._record_tier_change(metric_id, current_tier)
+        
+        return alerts
+    
+    def _get_last_tier(self, metric_id: str) -> MetricTier:
+        """Recupera último tier da memória (simulação)"""
+        # Em produção: buscar do banco de dados
+        return MetricTier.HEALTHY  # Default
+    
+    def _record_tier_change(self, metric_id: str, new_tier: MetricTier):
+        """Registra mudança de tier para histórico"""
+        self.alert_history.append({
+            "metric_id": metric_id,
+            "new_tier": new_tier.value,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    def _get_alert_priority(self, new_tier: MetricTier, old_tier: MetricTier) -> str:
+        """Determina prioridade do alerta baseado na mudança"""
+        if new_tier == MetricTier.CRITICAL:
+            return "P0-CRITICAL"
+        elif new_tier == MetricTier.WARNING and old_tier == MetricTier.HEALTHY:
+            return "P1-HIGH"
+        elif new_tier == MetricTier.OPTIMIZATION:
+            return "P2-MEDIUM"
+        else:
+            return "P3-LOW"
+
+# Instância global do sistema de alertas
+alert_system = AlertSystem()
+
+# ============================================================
+# FUNÇÕES DE UTILIDADE PARA DASHBOARD
+# ============================================================
+
+def generate_metric_summary() -> Dict:
+    """Gera resumo executivo completo"""
+    summary = get_executive_summary()
+    
+    total_metrics = len(ALL_METRICS)
+    critical_count = len(summary["critical"])
+    warning_count = len(summary["warning"])
+    optimization_count = len(summary["optimization"])
+    healthy_count = len(summary["healthy"])
+    
+    return {
+        "total_metrics": total_metrics,
+        "by_tier": {
+            "critical": {"count": critical_count, "percentage": (critical_count/total_metrics)*100},
+            "warning": {"count": warning_count, "percentage": (warning_count/total_metrics)*100},
+            "optimization": {"count": optimization_count, "percentage": (optimization_count/total_metrics)*100},
+            "healthy": {"count": healthy_count, "percentage": (healthy_count/total_metrics)*100}
+        },
+        "overall_health_score": (healthy_count + optimization_count*0.8) / total_metrics * 100,
+        "requires_attention": critical_count > 0 or warning_count > 2,
+        "recommendations": generate_recommendations(summary)
+    }
+
+def generate_recommendations(summary: Dict) -> List[str]:
+    """Gera recomendações baseadas no resumo"""
+    recommendations = []
+    
+    if len(summary["critical"]) > 0:
+        recommendations.append("🚨 Ação imediata necessária: revisar LTV/CAC ratio")
+    
+    if len(summary["warning"]) > 2:
+        recommendations.append("⚠️ Múltiplos alertas: verificar response time e recovery rate")
+    
+    if len(summary["optimization"]) > 3:
+        recommendations.append("🔧 Oportunidades identificadas: otimizar templates WhatsApp")
+    
+    if len(summary["healthy"]) < len(ALL_METRICS) * 0.6:
+        recommendations.append("📊 Poucas métricas saudáveis: focar em baseline establishment")
+    
+    return recommendations
+
+def get_phase_progress() -> Dict[str, Dict]:
+    """Retorna progresso por fase do roadmap"""
+    phases = {
+        "revenue_activation": {"metrics": 0, "healthy": 0, "score": 0},
+        "wholesale_engine": {"metrics": 0, "healthy": 0, "score": 0},
+        "operational_liberation": {"metrics": 0, "healthy": 0, "score": 0},
+        "compliance": {"metrics": 0, "healthy": 0, "score": 0}
+    }
+    
+    for metric_id, threshold in ALL_METRICS.items():
+        phase = get_phase_from_metric(metric_id)
+        phase_key = phase.lower().replace(" ", "_").replace(":", "")
+        
+        if phase_key in phases:
+            phases[phase_key]["metrics"] += 1
+            current_value = get_current_value(metric_id)
+            current_tier = threshold.classify(current_value)
+            
+            if current_tier == MetricTier.HEALTHY:
+                phases[phase_key]["healthy"] += 1
+    
+    # Calcular scores (0-100)
+    for phase_data in phases.values():
+        if phase_data["metrics"] > 0:
+            phase_data["score"] = (phase_data["healthy"] / phase_data["metrics"]) * 100
+    
+    return phases

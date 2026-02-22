@@ -1,138 +1,207 @@
+#!/usr/bin/env python3
 """
-Configurações centralizadas do PiranhaOps
-Fácil de trocar entre MOCK e PRODUÇÃO
+Configuração Centralizada - PiranhaOps AIOS v3.0
+Estrutura de configuração seguindo o prompt estratégico completo
 """
 
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+from enum import Enum
 import os
-import logging
-from dataclasses import dataclass
-from typing import Dict, Optional
+from pathlib import Path
 from dotenv import load_dotenv
 
-logger = logging.getLogger(__name__)
+class Environment(Enum):
+    MOCK = "mock"
+    LOCALHOST = "localhost"
+    PRODUCTION = "production"
+
+class SquadType(Enum):
+    COMMERCIAL = "commercial"
+    OPERATIONAL = "operational"
+    INTELLIGENCE = "intelligence"
+
+class ModelTier(Enum):
+    ECONOMY = "economy"      # 85% - kimi-k2-turbo-preview
+    STANDARD = "standard"    # 15% - kimi-k2-0905-preview  
+    DEEP = "deep"           # <1% - kimi-k2-thinking
 
 @dataclass
 class Settings:
-    """Configurações do sistema"""
+    """
+    Configuração centralizada do PiranhaOps AIOS v3.0
+    Seguindo especificações do prompt estratégico
+    """
     
-    # Modo de operação: 'mock' ou 'production'
-    MODE: str = 'mock'
+    # ============================================================
+    # SEÇÃO 1: AMBIENTE E MODO
+    # ============================================================
+    ENVIRONMENT: Environment = Environment.LOCALHOST
+    DEBUG: bool = True
+    LOG_LEVEL: str = "INFO"
     
-    # Moonshot API
-    MOONSHOT_API_KEY: str = ''
-    MOONSHOT_BASE_URL: str = 'https://api.moonshot.ai/v1'
+    # ============================================================
+    # SEÇÃO 2: ORQUESTRAÇÃO (AIOS)
+    # ============================================================
+    AIOS_QUALITY_THRESHOLD: float = 0.85          # 85% mínimo
+    AIOS_MAX_TASKS: int = 1000
+    AIOS_TASK_TIMEOUT_SECONDS: int = 300
+    AIOS_RETRY_ATTEMPTS: int = 3
+    AIOS_RETRY_DELAY_SECONDS: int = 5
     
-    # Meta (mock por enquanto)
-    META_ACCESS_TOKEN: str = 'mock_token_meta_12345'
-    META_AD_ACCOUNT_ID: str = 'act_mock_67890'
+    # Distribuição de Modelos (OBRIGATÓRIO: 85/15/<1)
+    MODEL_DISTRIBUTION: Dict[ModelTier, float] = field(default_factory=lambda: {
+        ModelTier.ECONOMY: 0.85,
+        ModelTier.STANDARD: 0.15,
+        ModelTier.DEEP: 0.005  # 0.5% (arredonda para 1 task em 127)
+    })
     
-    # Shopify (mock por enquanto)
-    SHOPIFY_STORE: str = 'piranha-global-mock.myshopify.com'
-    SHOPIFY_ACCESS_TOKEN: str = 'mock_token_shopify_12345'
+    # ============================================================
+    # SEÇÃO 3: SQUADS CONFIGURAÇÃO
+    # ============================================================
+    SQUADS_CONFIG: Dict[SquadType, Dict] = field(default_factory=lambda: {
+        SquadType.COMMERCIAL: {
+            "enabled": True,
+            "max_concurrent_tasks": 50,
+            "priority": "high",
+            "business_hours": {"start": 8, "end": 22},
+            "auto_recovery": True
+        },
+        SquadType.OPERATIONAL: {
+            "enabled": True,
+            "max_concurrent_tasks": 40,
+            "priority": "medium",
+            "business_hours": {"start": 0, "end": 24},
+            "auto_recovery": True
+        },
+        SquadType.INTELLIGENCE: {
+            "enabled": True,
+            "max_concurrent_tasks": 60,
+            "priority": "high",
+            "business_hours": {"start": 0, "end": 24},
+            "auto_recovery": False  # Requer supervisão humana
+        }
+    })
     
-    # Slack (mock por enquanto)
-    SLACK_WEBHOOK_URL: str = 'https://hooks.slack.com/services/MOCK/WEBHOOK/URL'
+    # ============================================================
+    # SEÇÃO 4: INTEGRAÇÕES MCP (CHAVES - Carregadas de .env)
+    # ============================================================
     
-    # Configurações de negócio
-    CHECK_INTERVAL_MINUTES: int = 5  # 5 min para testes (depois 30)
-    ROAS_THRESHOLD: float = 3.0
-    CTR_THRESHOLD: float = 1.0
-    BUDGET_DAILY_USD: float = 1.00  # €0.93 para testes
+    # Moonshot AI (Obrigatório)
+    MOONSHOT_API_KEY: Optional[str] = None
+    MOONSHOT_BASE_URL: str = "https://api.moonshot.ai/v1"
     
-    # Modelos
-    DEFAULT_MODEL: str = 'kimi-k2-turbo-preview'
-    ANALYSIS_MODEL: str = 'kimi-k2-0905-preview'
-    DEEP_MODEL: str = 'kimi-k2-thinking'
-
+    # Meta (Mock por enquanto)
+    META_ACCESS_TOKEN: Optional[str] = None
+    META_AD_ACCOUNT_ID: Optional[str] = None
+    META_CAPI_ACCESS_TOKEN: Optional[str] = None
+    
+    # Shopify
+    SHOPIFY_STORE_URL: Optional[str] = None  # formato: loja.myshopify.com
+    SHOPIFY_ACCESS_TOKEN: Optional[str] = None
+    SHOPIFY_API_VERSION: str = "2024-01"
+    
+    # Klaviyo
+    KLAVIYO_API_KEY: Optional[str] = None
+    KLAVIYO_LIST_ID: Optional[str] = None
+    
+    # WhatsApp Business
+    WHATSAPP_BUSINESS_ID: Optional[str] = None
+    WHATSAPP_ACCESS_TOKEN: Optional[str] = None
+    WHATSAPP_PHONE_NUMBER_ID: Optional[str] = None
+    
+    # Sage X3
+    SAGE_X3_BASE_URL: Optional[str] = None
+    SAGE_X3_API_KEY: Optional[str] = None
+    SAGE_X3_COMPANY: Optional[str] = None
+    
+    # ============================================================
+    # SEÇÃO 5: THRESHOLDS E REGRAS DE NEGÓCIO
+    # ============================================================
+    
+    # Métricas B2B Tattoo Supplies
+    ROAS_THRESHOLD: float = 3.0          # Mínimo aceitável
+    CTR_THRESHOLD: float = 1.0           # Percentual
+    CPC_MAX_TARGET: float = 1.50         # Euros
+    CPM_NORMAL_RANGE: tuple = (8, 15)    # Euros
+    
+    # Cart Recovery
+    CART_ABANDONMENT_DELAY_MINUTES: int = 60  # Tempo antes de considerar abandonado
+    WHATSAPP_RECOVERY_DELAY_MINUTES: int = 15  # OPP-001: Reduzir para 15min
+    EMAIL_FALLBACK_DELAY_HOURS: int = 24
+    
+    # Qualidade
+    MIN_QUALITY_SCORE: float = 0.85
+    AUTO_ESCALATE_QUALITY: float = 0.60  # Abaixo disso, escala para humano
+    
+    # ============================================================
+    # SEÇÃO 6: OTIMIZAÇÃO DE CUSTOS (€37/mês)
+    # ============================================================
+    BUDGET_DAILY_USD: float = 1.00       # ~€0.93
+    BUDGET_MONTHLY_EUR: float = 37.00
+    
+    # Limites por tier (em tokens)
+    ECONOMY_MAX_TOKENS: int = 2000
+    STANDARD_MAX_TOKENS: int = 4000
+    DEEP_MAX_TOKENS: int = 8000
+    
+    # ============================================================
+    # SEÇÃO 7: DASHBOARD
+    # ============================================================
+    DASHBOARD_HOST: str = "0.0.0.0"
+    DASHBOARD_PORT: int = 8083
+    DASHBOARD_REFRESH_INTERVAL_MS: int = 5000
+    DASHBOARD_THEME: str = "dark"  # dark | light
+    
+    # ============================================================
+    # MÉTODOS
+    # ============================================================
+    
     @classmethod
-    def from_env(cls) -> 'Settings':
-        """Carrega do .env ou usa defaults"""
-        try:
-            load_dotenv()
-        except Exception as e:
-            logger.warning(f"Não foi possível carregar .env: {e}")
+    def from_env(cls) -> "Settings":
+        """Carrega configurações de variáveis de ambiente"""
+        load_dotenv("config/secrets.env")
         
         return cls(
-            MODE=os.getenv('MODE', 'mock'),
-            MOONSHOT_API_KEY=os.getenv('MOONSHOT_API_KEY', ''),
-            MOONSHOT_BASE_URL=os.getenv('MOONSHOT_BASE_URL', 'https://api.moonshot.ai/v1'),
-            META_ACCESS_TOKEN=os.getenv('META_ACCESS_TOKEN', 'mock_token_meta_12345'),
-            META_AD_ACCOUNT_ID=os.getenv('META_AD_ACCOUNT_ID', 'act_mock_67890'),
-            SHOPIFY_STORE=os.getenv('SHOPIFY_STORE', 'piranha-global-mock.myshopify.com'),
-            SHOPIFY_ACCESS_TOKEN=os.getenv('SHOPIFY_ACCESS_TOKEN', 'mock_token_shopify_12345'),
-            SLACK_WEBHOOK_URL=os.getenv('SLACK_WEBHOOK_URL', 'https://hooks.slack.com/services/MOCK/WEBHOOK/URL'),
-            CHECK_INTERVAL_MINUTES=int(os.getenv('CHECK_INTERVAL_MINUTES', '5')),
-            ROAS_THRESHOLD=float(os.getenv('ROAS_THRESHOLD', '3.0')),
-            CTR_THRESHOLD=float(os.getenv('CTR_THRESHOLD', '1.0')),
-            BUDGET_DAILY_USD=float(os.getenv('BUDGET_DAILY_USD', '1.00')),
+            ENVIRONMENT=Environment(os.getenv("MODE", "localhost")),
+            MOONSHOT_API_KEY=os.getenv("MOONSHOT_API_KEY"),
+            META_ACCESS_TOKEN=os.getenv("META_ACCESS_TOKEN"),
+            SHOPIFY_ACCESS_TOKEN=os.getenv("SHOPIFY_ACCESS_TOKEN"),
+            KLAVIYO_API_KEY=os.getenv("KLAVIYO_API_KEY"),
+            WHATSAPP_ACCESS_TOKEN=os.getenv("WHATSAPP_ACCESS_TOKEN"),
+            SAGE_X3_API_KEY=os.getenv("SAGE_X3_API_KEY"),
+            BUDGET_DAILY_USD=float(os.getenv("BUDGET_DAILY_USD", "1.00")),
+            BUDGET_MONTHLY_EUR=float(os.getenv("BUDGET_MONTHLY_EUR", "37.00"))
         )
     
     def is_mock(self) -> bool:
-        """Verifica se está em modo mock"""
-        return self.MODE.lower() == 'mock'
+        """Retorna True se estiver em modo mock/localhost"""
+        return self.ENVIRONMENT in [Environment.MOCK, Environment.LOCALHOST]
+    
+    def get_squad_config(self, squad: SquadType) -> Dict:
+        """Retorna configuração específica do squad"""
+        return self.SQUADS_CONFIG.get(squad, {})
     
     def validate(self) -> bool:
-        """Valida configurações essenciais"""
-        errors = []
+        """
+        Valida consistência das configurações
+        Levanta ValueError se houver inconsistências
+        """
+        # Validar distribuição 85/15/<1
+        total_dist = sum(self.MODEL_DISTRIBUTION.values())
+        if not 0.99 <= total_dist <= 1.01:
+            raise ValueError(f"Distribuição de modelos deve somar 1.0, atual: {total_dist}")
         
-        if not self.is_mock():
-            # Validações para modo produção
-            if not self.MOONSHOT_API_KEY:
-                errors.append("MOONSHOT_API_KEY é obrigatório em modo produção")
-            if not self.META_ACCESS_TOKEN or 'mock' in self.META_ACCESS_TOKEN:
-                errors.append("META_ACCESS_TOKEN inválido em modo produção")
-            if not self.META_AD_ACCOUNT_ID or 'mock' in self.META_AD_ACCOUNT_ID:
-                errors.append("META_AD_ACCOUNT_ID inválido em modo produção")
-            
-            # Validações de formato
-            if not self.META_AD_ACCOUNT_ID.startswith('act_'):
-                errors.append("META_AD_ACCOUNT_ID deve começar com 'act_'")
+        # Validar thresholds
+        if self.AIOS_QUALITY_THRESHOLD < 0 or self.AIOS_QUALITY_THRESHOLD > 1:
+            raise ValueError("Quality threshold deve estar entre 0 e 1")
         
-        # Validações comuns
+        # Validar budgets
         if self.BUDGET_DAILY_USD <= 0:
-            errors.append("BUDGET_DAILY_USD deve ser positivo")
-        if self.ROAS_THRESHOLD <= 0:
-            errors.append("ROAS_THRESHOLD deve ser positivo")
-        if self.CHECK_INTERVAL_MINUTES < 1:
-            errors.append("CHECK_INTERVAL_MINUTES deve ser >= 1")
+            raise ValueError("Budget diário deve ser positivo")
         
-        if errors:
-            raise ValueError(f"Erros de configuração: {'; '.join(errors)}")
-        
-        logger.info(f"✅ Configurações validadas - Modo: {self.MODE}")
         return True
-    
-    def get_model_config(self) -> Dict:
-        """Retorna configuração dos modelos"""
-        return {
-            'economy': {
-                'id': self.DEFAULT_MODEL,
-                'input_price': 0.50,
-                'output_price': 2.00,
-                'description': 'Coleta, formatação, cálculos simples'
-            },
-            'standard': {
-                'id': self.ANALYSIS_MODEL,
-                'input_price': 2.00,
-                'output_price': 10.00,
-                'description': 'Análise, insights, escrita criativa'
-            },
-            'deep': {
-                'id': self.DEEP_MODEL,
-                'input_price': 3.00,
-                'output_price': 15.00,
-                'description': 'Debug complexo, arquitetura, estratégia'
-            }
-        }
-    
-    def to_dict(self) -> Dict:
-        """Retorna configurações como dicionário (para logs)"""
-        return {
-            'mode': self.MODE,
-            'budget_daily_usd': self.BUDGET_DAILY_USD,
-            'check_interval_minutes': self.CHECK_INTERVAL_MINUTES,
-            'roas_threshold': self.ROAS_THRESHOLD,
-            'ctr_threshold': self.CTR_THRESHOLD,
-            'meta_account': self.META_AD_ACCOUNT_ID if self.is_mock() else 'PRODUCTION',
-            'shopify_store': self.SHOPIFY_STORE if self.is_mock() else 'PRODUCTION'
-        }
+
+# Instância global
+settings = Settings.from_env()
+settings.validate()  # Valida na importação

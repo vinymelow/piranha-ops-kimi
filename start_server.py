@@ -13,7 +13,7 @@ import time
 from datetime import datetime
 import webbrowser
 
-PORT = 8085
+PORT = 8087
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     """Handler customizado para servir o dashboard PiranhaOps v2.0"""
