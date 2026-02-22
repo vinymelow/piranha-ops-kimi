@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦈 PiranhaOps AIOS v3.0 - Executive Dashboard</title>
+    <style>
+        /* Design System Piranha v3.0 */
+        :root {
+            --piranha-black: #0A0A0A;
+            --piranha-dark: #141414;
+            --piranha-gray: #1F1F1F;
+            --piranha-light-gray: #2A2A2A;
+            --piranha-red: #E30613;
+            --piranha-red-dark: #B8050F;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--piranha-black) 0%, #0D0D0D 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header-glass {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(227, 6, 19, 0.2);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-piranha {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(227, 6, 19, 0.5));
+            animation: shark-swim 3s ease-in-out infinite;
+        }
+
+        @keyframes shark-swim {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(5px) rotate(2deg); }
+        }
+
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        main {
+            padding: 32px 0;
+        }
+
+        /* Section Headers */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--piranha-red);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--piranha-red) 0%, #FF6B6B 100%);
+            border-radius: 2px;
+        }
+
+        /* Metric Cards */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--piranha-dark) 0%, var(--piranha-gray) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(227, 6, 19, 0.3);
+        }
+
+        .metric-card.critical {
+            border-left: 4px solid var(--danger);
+            animation: pulse-red 2s infinite;
+        }
+
+        .metric-card.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .metric-card.optimization {
+            border-left: 4px solid var(--info);
+        }
+
+        .metric-card.healthy {
+            border-left: 4px solid var(--success);
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .metric-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Squad Cards */
+        .squad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .squad-card {
+            background: linear-gradient(135deg, var(--piranha-dark) 0%, rgba(227, 6, 19, 0.05) 100%);
+            border: 1px solid rgba(227, 6, 19, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .squad-card:hover {
+            border-color: rgba(227, 6, 19, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .squad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .squad-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-setup {
+            background: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+
+        .status-pending {
+            background: var(--text-secondary);
+        }
+
+        .squad-agents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .agent-badge {
+            background: rgba(227, 6, 19, 0.1);
+            color: var(--piranha-red);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .squad-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .squad-metric {
+            text-align: center;
+        }
+
+        .squad-metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--piranha-red);
+        }
+
+        .squad-metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: var(--piranha-dark);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 12px;
+            margin: 0 -12px;
+        }
+
+        .activity-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 50px;
+        }
+
+        .activity-content {
+            flex: 1;
+            margin-left: 16px;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activity-squad {
+            font-size: 12px;
+            color: var(--piranha-red);
+            font-weight: 500;
+        }
+
+        .activity-priority {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .priority-normal {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+
+        /* Update Button */
+        .update-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--piranha-red) 0%, #FF6B6B 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(227, 6, 19, 0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .update-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(227, 6, 19, 0.4);
+        }
+
+        .update-button:active {
+            transform: translateY(0);
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--piranha-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .metric-grid,
+            .phase-grid,
+            .squad-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-glass">
+        <div class="container">
+            <div class="status-bar">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div class="logo-piranha">🦈</div>
+                    <div>
+                        <h1 style="font-size: 24px; font-weight: bold; color: var(--piranha-red); margin: 0;">PiranhaOps AIOS v3.0</h1>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">Sales Operations Command Center</p>
+                    </div>
+                </div>
+                <div class="time-display" id="current-time">
+                    Atualizando...
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 32px 0;">
+        
+        <!-- Executive Summary Cards -->
+        <section class="mb-8">
+            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📊 Resumo Executivo</h2>
+            <div class="metric-grid" id="executive-summary">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 16px;">Carregando métricas executivas...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase Progress -->
+        <section class="mb-8">
+            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📈 Progresso por Fase (Roadmap Teresa)</h2>
+            <div id="phase-progress">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 16px;">Carregando progresso...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Squads Status -->
+        <section class="mb-8">
+            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">🤖 Squads Ativos (AIOS)</h2>
+            <div id="squad-status">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 16px;">Carregando status dos squads...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Feed -->
+        <section style="background: var(--piranha-dark); border-radius: 12px; padding: 24px; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--piranha-red);">📡 Atividades em Tempo Real</h2>
+            <div id="activity-feed">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 16px;">Carregando atividades...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Update Button -->
+    <button id="update-dashboard" style="position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--piranha-red) 0%, #FF6B6B 100%); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 16px rgba(227, 6, 19, 0.3); transition: all 0.3s; z-index: 1000;">
+        🔄 Atualizar Agora
+    </button>
+
+    <script>
+        // Dashboard Controller
+        class ExecutiveDashboard {
+            constructor() {
+                this.updateInterval = 30000; // 30 segundos
+                this.isUpdating = false;
+                this.init();
+            }
+
+            async init() {
+                console.log('🦈 Iniciando Executive Dashboard...');
+                await this.loadInitialData();
+                this.startAutoUpdate();
+                this.setupEventListeners();
+                this.updateTimeDisplay();
+                
+                // Animação de entrada
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    document.body.style.transition = 'all 0.6s ease';
+                    document.body.style.opacity = '1';
+                    document.body.style.transform = 'translateY(0)';
+                }, 100);
+            }
+
+            async loadInitialData() {
+                await Promise.all([
+                    this.loadExecutiveSummary(),
+                    this.loadPhaseProgress(),
+                    this.loadSquadStatus(),
+                    this.loadActivities()
+                ]);
+            }
+
+            async loadExecutiveSummary() {
+                try {
+                    const response = await fetch('/api/executive-summary');
+                    const data = await response.json();
+                    this.renderExecutiveSummary(data);
+                } catch (error) {
+                    console.error('Erro ao carregar resumo executivo:', error);
+                    this.showError('executive-summary', 'Erro ao carregar métricas');
+                }
+            }
+
+            renderExecutiveSummary(data) {
+                const container = document.getElementById('executive-summary');
+                
+                const metrics = [
+                    { tier: 'critical', title: '🚨 Críticos', count: data.metrics_by_tier.critical.length, color: 'red' },
+                    { tier: 'warning', title: '⚠️ Atenção', count: data.metrics_by_tier.warning.length, color: 'yellow' },
+                    { tier: 'optimization', title: '🔧 Otimização', count: data.metrics_by_tier.optimization.length, color: 'blue' },
+                    { tier: 'healthy', title: '✅ Saudáveis', count: data.metrics_by_tier.healthy.length, color: 'green' }
+                ];
+
+                container.innerHTML = metrics.map(metric => `
+                    <div class="metric-card ${metric.color}">
+                        <div class="metric-header">
+                            <h3 class="metric-title">${metric.title}</h3>
+                            <span style="background: rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">${metric.count}</span>
+                        </div>
+                        <p class="metric-value">${this.getSampleMetric(metric.tier).name}</p>
+                        <p class="metric-subtitle">${this.getSampleMetric(metric.tier).value}</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${this.getSampleMetric(metric.tier).progress}%; background: var(--${metric.color});"></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getSampleMetric(tier) {
+                const samples = {
+                    critical: { name: 'LTV/CAC Ratio', value: '2.8:1 (Meta: 4:1)', progress: '70' },
+                    warning: { name: 'Response Time', value: '12min (Meta: 5min)', progress: '60' },
+                    optimization: { name: 'Recovery Rate', value: '8% (Meta: 10%)', progress: '80' },
+                    healthy: { name: 'Forecast Acc.', value: '91% (Meta: 85%)', progress: '100' }
+                };
+                return samples[tier] || { name: 'Metric', value: '0', progress: '0' };
+            }
+
+            async loadPhaseProgress() {
+                try {
+                    const response = await fetch('/api/executive-summary');
+                    const data = await response.json();
+                    this.renderPhaseProgress(data.phase_progress);
+                } catch (error) {
+                    console.error('Erro ao carregar progresso:', error);
+                    this.showError('phase-progress', 'Erro ao carregar progresso');
+                }
+            }
+
+            renderPhaseProgress(phases) {
+                const container = document.getElementById('phase-progress');
+                
+                const phaseData = [
+                    { id: 'revenue_activation', name: 'Fase 1', title: 'Revenue Activation', desc: 'Carrinho → WhatsApp, Scraping, Forecast', progress: phases.revenue_activation.score, status: phases.revenue_activation.status },
+                    { id: 'wholesale_engine', name: 'Fase 2', title: 'Wholesale Engine', desc: 'Become a Partner, Tiers B2B', progress: phases.wholesale_engine.score, status: phases.wholesale_engine.status },
+                    { id: 'operational_lib', name: 'Fase 3', title: 'Operational Liberation', desc: 'DHL, COD, Time-saving', progress: phases.operational_lib.score, status: phases.operational_lib.status },
+                    { id: 'compliance', name: 'Fase 4', title: 'Compliance', desc: 'Infarmed, RMA, Banking', progress: phases.compliance.score, status: phases.compliance.status }
+                ];
+
+                const statusColors = {
+                    on_track: 'green',
+                    ahead: 'blue',
+                    delayed: 'yellow',
+                    not_started: 'gray'
+                };
+
+                const statusIcons = {
+                    on_track: '✓',
+                    ahead: '🚀',
+                    delayed: '⚠️',
+                    not_started: '⏳'
+                };
+
+                container.innerHTML = phaseData.map(phase => `
+                    <div class="phase-card" style="border-top: 3px solid var(--${statusColors[phase.status]});">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-weight: 600;">${phase.name}</span>
+                            <span style="font-size: 24px; font-weight: 900; color: var(--piranha-red);">${phase.progress}%</span>
+                        </div>
+                        <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">${phase.title}</h4>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">${phase.desc}</p>
+                        <div class="progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;">
+                            <div class="progress-fill" style="width: ${phase.progress}%; background: var(--${statusColors[phase.status]}); height: 100%;"></div>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 12px; color: var(--${statusColors[phase.status]});">
+                            ${statusIcons[phase.status]} ${phase.status.replace('_', ' ')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadSquadStatus() {
+                try {
+                    // Carrega Commercial Squad primeiro
+                    const response = await fetch('/api/squad/commercial/status');
+                    const commercialData = await response.json();
+                    
+                    // Renderiza Commercial
+                    this.renderSquadCards([commercialData]);
+                    
+                    // Carrega outros squads
+                    const squads = ['wholesale', 'operational', 'compliance'];
+                    for (const squad of squads) {
+                        const resp = await fetch(`/api/squad/${squad}/status`);
+                        const squadData = await resp.json();
+                        this.renderSquadCards([squadData]);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar status dos squads:', error);
+                    this.showError('squad-status', 'Erro ao carregar squads');
+                }
+            }
+
+            renderSquadCards(squads) {
+                const container = document.getElementById('squad-status');
+                
+                squads.forEach(squad => {
+                    const squadElement = document.createElement('div');
+                    squadElement.className = 'squad-card';
+                    squadElement.innerHTML = `
+                        <div class="squad-header">
+                            <h3 class="squad-title">${squad.squad_name}</h3>
+                            <span class="status-dot status-${squad.status}"></span>
+                        </div>
+                        <div class="squad-agents">
+                            ${squad.agents.map(agent => `<span class="agent-badge">${agent}</span>`).join('')}
+                        </div>
+                        <div class="squad-metrics">
+                            <div class="squad-metric">
+                                <div class="squad-metric-value">${squad.tasks_today}</div>
+                                <div class="squad-metric-label">Tasks Hoje</div>
+                            </div>
+                            <div class="squad-metric">
+                                <div class="squad-metric-value">${Math.round(squad.quality_score * 100)}%</div>
+                                <div class="squad-metric-label">Qualidade</div>
+                            </div>
+                            <div class="squad-metric">
+                                <div class="squad-metric-value">${squad.agents_online}</div>
+                                <div class="squad-metric-label">Agentes</div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Atividades Recentes</h4>
+                            <div class="space-y-2">
+                                ${squad.activities.slice(0, 2).map(activity => `
+                                    <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;">
+                                        <span style="color: var(--text-secondary);">${activity.time}</span>
+                                        <span style="color: var(--piranha-red); font-weight: 500;">${activity.activity}</span>
+                                        <span class="activity-priority priority-${activity.priority}" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase;">${activity.priority}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(squadElement);
+                });
+            }
+
+            async loadActivities() {
+                try {
+                    const response = await fetch('/api/activities');
+                    const data = await response.json();
+                    this.renderActivityFeed(data.activities);
+                } catch (error) {
+                    console.error('Erro ao carregar atividades:', error);
+                    this.showError('activity-feed', 'Erro ao carregar atividades');
+                }
+            }
+
+            renderActivityFeed(activities) {
+                const container = document.getElementById('activity-feed');
+                
+                if (activities.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                            <p>Nenhuma atividade recente</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-time">${this.formatTime(activity.timestamp)}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.activity}</div>
+                            <div class="activity-squad">${activity.squad}</div>
+                        </div>
+                        <div class="activity-priority priority-${activity.priority}">${activity.priority}</div>
+                    </div>
+                `).join('');
+            }
+
+            formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                
+                if (diff < 60000) return 'Agora';
+                if (diff < 3600000) return `${Math.floor(diff / 60000)}min`;
+                if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
+                
+                return date.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+            }
+
+            startAutoUpdate() {
+                setInterval(() => {
+                    this.updateTimeDisplay();
+                    this.loadData();
+                }, this.updateInterval);
+
+                console.log(`📡 Auto-atualização iniciada: ${this.updateInterval/1000}s`);
+            }
+
+            async loadData() {
+                if (this.isUpdating) return;
+                
+                this.isUpdating = true;
+                document.getElementById('update-dashboard').style.opacity = '0.6';
+                document.getElementById('update-dashboard').style.pointerEvents = 'none';
+                
+                try {
+                    await Promise.all([
+                        this.loadExecutiveSummary(),
+                        this.loadPhaseProgress(),
+                        this.loadSquadStatus(),
+                        this.loadActivities()
+                    ]);
+                } catch (error) {
+                    console.error('Erro na atualização automática:', error);
+                } finally {
+                    this.isUpdating = false;
+                    document.getElementById('update-dashboard').style.opacity = '1';
+                    document.getElementById('update-dashboard').style.pointerEvents = 'auto';
+                }
+            }
+
+            setupEventListeners() {
+                document.getElementById('update-dashboard').addEventListener('click', () => {
+                    this.loadData();
+                });
+
+                // Atualização manual de tempo
+                setInterval(() => {
+                    this.updateTimeDisplay();
+                }, 1000);
+            }
+
+            updateTimeDisplay() {
+                const now = new Date();
+                const timeElement = document.getElementById('current-time');
+                
+                timeElement.textContent = now.toLocaleString('pt-BR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+
+            showError(containerId, message) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div style="text-align: center; color: #ef4444; padding: 40px;">
+                        <p>❌ ${message}</p>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                            Recarregar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Inicializar dashboard quando DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            new ExecutiveDashboard();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+{
+  "mcpServers": {
+    "meta_marketing": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.meta_mcp"],
+      "env": {
+        "META_ACCESS_TOKEN": "${META_ACCESS_TOKEN}",
+        "META_AD_ACCOUNT_ID": "${META_AD_ACCOUNT_ID}",
+        "META_CAPI_TOKEN": "${META_CAPI_TOKEN}"
+      },
+      "tools": [
+        "get_campaign_insights",
+        "update_campaign_budget",
+        "create_audience",
+        "send_capi_event"
+      ],
+      "cost_optimization": {
+        "cache_duration_minutes": 30,
+        "batch_requests": true
+      }
+    },
+    "shopify_admin": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.shopify_mcp"],
+      "env": {
+        "SHOPIFY_SHOP_DOMAIN": "${SHOPIFY_SHOP_DOMAIN}",
+        "SHOPIFY_ACCESS_TOKEN": "${SHOPIFY_ACCESS_TOKEN}",
+        "SHOPIFY_API_VERSION": "2024-01"
+      },
+      "tools": [
+        "get_customer_by_email",
+        "create_draft_order",
+        "update_inventory",
+        "get_abandoned_checkouts"
+      ],
+      "webhooks": {
+        "checkout_update": "/webhooks/shopify/checkout",
+        "order_paid": "/webhooks/shopify/order"
+      }
+    },
+    "klaviyo_data": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.klaviyo_mcp"],
+      "env": {
+        "KLAVIYO_API_KEY": "${KLAVIYO_API_KEY}",
+        "KLAVIYO_PRIVATE_KEY": "${KLAVIYO_PRIVATE_KEY}"
+      },
+      "tools": [
+        "get_profile_by_email",
+        "get_phone_from_profile",
+        "trigger_flow",
+        "create_segment"
+      ],
+      "data_bridge": {
+        "phone_extraction_enabled": true,
+        "fallback_to_shopify": true
+      }
+    },
+    "whatsapp_evolution": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.whatsapp_evolution"],
+      "env": {
+        "EVOLUTION_API_URL": "http://localhost:8080",
+        "EVOLUTION_API_KEY": "${EVOLUTION_API_KEY}",
+        "INSTANCE_NAME": "piranha_main"
+      },
+      "tools": [
+        "send_text_message",
+        "send_template",
+        "send_buttons",
+        "get_chat_history"
+      ],
+      "cost": {
+        "model": "zero_cost",
+        "description": "Evolution API - no Meta API fees"
+      },
+      "templates": {
+        "cart_recovery_v1": "cart_recovery_v1",
+        "partner_welcome_v1": "partner_welcome_v1",
+        "stock_alert_v1": "stock_alert_v1"
+      }
+    },
+    "sage_x3": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.sage_x3_mcp"],
+      "env": {
+        "SAGE_X3_API_URL": "${SAGE_X3_API_URL}",
+        "SAGE_X3_API_KEY": "${SAGE_X3_API_KEY}"
+      },
+      "tools": [
+        "get_stock_levels",
+        "predict_stockout",
+        "get_partner_purchases",
+        "check_creditworthiness"
+      ],
+      "forecasting": {
+        "horizon_days": 14,
+        "min_confidence": 0.85
+      }
+    },
+    "slack_commands": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.slack_mcp"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_CHANNEL_OPS": "${SLACK_CHANNEL_OPS}"
+      },
+      "tools": [
+        "send_alert",
+        "send_metric_report",
+        "command_status"
+      ],
+      "alerts": {
+        "critical_metrics": true,
+        "daily_digest": true,
+        "squad_status": true
+      }
+    }
+  },
+  "aios_config": {
+    "quality_threshold": 0.85,
+    "max_concurrent_tasks": 50,
+    "sinapse_persistence": {
+      "engine": "sqlite",
+      "path": "data/sinapse.db",
+      "backup_interval_hours": 24
+    },
+    "cost_optimization": {
+      "moonshot_distribution": {
+        "economy": 0.85,
+        "standard": 0.15,
+        "deep": 0.01
+      },
+      "monthly_budget_eur": 37
+    }
+  }
+}
