@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 PiranhaOps Analytics - Inspired by Shopify Analytics</title>
+    <style>
+        /* PiranhaOps Analytics - Inspired by Shopify Analytics Design */
+        :root {
+            --piranha-black: #0A0A0A;
+            --piranha-dark: #141414;
+            --piranha-gray: #1F1F1F;
+            --piranha-light-gray: #2D2D2D;
+            --piranha-red: #E30613;
+            --piranha-red-dark: #B0050F;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --border-light: rgba(255, 255, 255, 0.1);
+            --border-medium: rgba(255, 255, 255, 0.2);
+            --glass-bg: rgba(20, 20, 20, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--piranha-black) 0%, #0D0D0D 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .analytics-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header - Shopify Style */
+        .analytics-header {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--piranha-red) 0%, #FF6B6B 50%, var(--piranha-red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .date-range-selector {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .date-btn {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .date-btn:hover {
+            border-color: var(--piranha-red);
+            color: var(--text-primary);
+        }
+
+        .date-btn.active {
+            background: var(--piranha-red);
+            border-color: var(--piranha-red);
+            color: white;
+        }
+
+        /* Key Metrics - Shopify Style Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(227, 6, 19, 0.2);
+            border-color: rgba(227, 6, 19, 0.3);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--piranha-red) 0%, #FF6B6B 100%);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(227, 6, 19, 0.1);
+            color: var(--piranha-red);
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-change.positive {
+            color: var(--success);
+        }
+
+        .metric-change.negative {
+            color: var(--danger);
+        }
+
+        /* Charts Section - Shopify Style */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .chart-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Agent Performance Chart */
+        .agent-performance-chart {
+            height: 300px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            gap: 12px;
+        }
+
+        .performance-bar {
+            width: 60px;
+            background: linear-gradient(180deg, var(--piranha-red) 0%, #FF6B6B 100%);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .performance-bar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(227, 6, 19, 0.4);
+        }
+
+        .performance-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--piranha-dark);
+            padding: 4px 8px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .performance-bar:hover::after {
+            opacity: 1;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Task Distribution - Shopify Style */
+        .task-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .distribution-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .distribution-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .distribution-label {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .distribution-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Agent Activity Feed - Shopify Style */
+        .activity-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .activity-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            border-color: var(--border-medium);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(227, 6, 19, 0.1);
+            color: var(--piranha-red);
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .activity-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-running {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .analytics-container {
+                padding: 16px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .date-range-selector {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-shimmer {
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--piranha-red);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--piranha-red-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-container">
+        <!-- Header - Shopify Style -->
+        <header class="analytics-header">
+            <div class="header-top">
+                <div>
+                    <h1 class="header-title">📊 PiranhaOps Analytics</h1>
+                    <p class="header-subtitle">Monitoramento de performance e insights em tempo real</p>
+                </div>
+                <div class="date-range-selector">
+                    <button class="date-btn" onclick="changeDateRange('today')">Hoje</button>
+                    <button class="date-btn active" onclick="changeDateRange('7d')">Últimos 7 dias</button>
+                    <button class="date-btn" onclick="changeDateRange('30d')">Últimos 30 dias</button>
+                    <button class="date-btn" onclick="changeDateRange('90d')">Últimos 90 dias</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Key Metrics - Shopify Style -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Receita Total</div>
+                        <div class="metric-value">€24,567</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+12.5% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">💰</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Taxa de Conversão</div>
+                        <div class="metric-value">3.24%</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+0.8% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">📈</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Carrinhos Recuperados</div>
+                        <div class="metric-value">847</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+15.3% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">🛒</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Novos Parceiros B2B</div>
+                        <div class="metric-value">23</div>
+                        <div class="metric-change negative">
+                            <span>↘</span>
+                            <span>-2.1% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">🤝</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Tickets de Suporte</div>
+                        <div class="metric-value">156</div>
+                        <div class="metric-change positive">
+                            <span>↘</span>
+                            <span>-18.7% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">🎫</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-title">Qualidade dos Agentes</div>
+                        <div class="metric-value">94.2%</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+2.1% vs período anterior</span>
+                        </div>
+                    </div>
+                    <div class="metric-icon">🤖</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section - Shopify Style -->
+        <section class="charts-section">
+            <!-- Agent Performance Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Performance dos Agentes</div>
+                        <div class="chart-subtitle">Tasks completadas por agente nos últimos 7 dias</div>
+                    </div>
+                </div>
+                <div class="agent-performance-chart" id="agent-performance-chart">
+                    <!-- Performance bars will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Task Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Distribuição de Tasks</div>
+                        <div class="chart-subtitle">Por tipo de operação</div>
+                    </div>
+                </div>
+                <div class="task-distribution">
+                    <div class="distribution-item">
+                        <div class="distribution-color" style="background: var(--piranha-red);"></div>
+                        <div class="distribution-label">Recuperação de Carrinhos</div>
+                        <div class="distribution-value">847 (42%)</div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-color" style="background: var(--success);"></div>
+                        <div class="distribution-label">Processamento de Leads</div>
+                        <div class="distribution-value">623 (31%)</div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-color" style="background: var(--info);"></div>
+                        <div class="distribution-label">Gestão de Parceiros</div>
+                        <div class="distribution-value">345 (17%)</div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-color" style="background: var(--warning);"></div>
+                        <div class="distribution-label">Análises e Relatórios</div>
+                        <div class="distribution-value">201 (10%)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Feed - Shopify Style -->
+        <section class="activity-section">
+            <div class="activity-header">
+                <div>
+                    <div class="activity-title">Atividade Recente dos Agentes</div>
+                </div>
+                <button class="date-btn" onclick="refreshActivity()">🔄 Atualizar</button>
+            </div>
+            <div class="activity-list" id="activity-list">
+                <!-- Activity items will be generated by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // PiranhaOps Analytics - Inspired by Shopify Analytics
+        class PiranhaAnalytics {
+            constructor() {
+                this.currentDateRange = '7d';
+                this.agents = [
+                    { name: 'Cart Recovery Bot', tasks: 847, color: '#E30613' },
+                    { name: 'Lead Processor', tasks: 623, color: '#10B981' },
+                    { name: 'Partner Manager', tasks: 345, color: '#3B82F6' },
+                    { name: 'Analytics Engine', tasks: 201, color: '#F59E0B' },
+                    { name: 'Compliance Monitor', tasks: 156, color: '#8B5CF6' }
+                ];
+                
+                this.activities = [
+                    { icon: '🛒', text: 'Carrinho recuperado com sucesso - €245.80', time: '2 minutos atrás', status: 'success' },
+                    { icon: '🤝', text: 'Novo parceiro B2B aprovado - Tattoo Studio Pro', time: '5 minutos atrás', status: 'success' },
+                    { icon: '📊', text: 'Análise de churn concluída - 94% de precisão', time: '8 minutos atrás', status: 'success' },
+                    { icon: '🎫', text: 'Ticket de suporte resolvido automaticamente', time: '12 minutos atrás', status: 'success' },
+                    { icon: '🔄', text: 'Sincronização DHL concluída - 47 pedidos', time: '15 minutos atrás', status: 'running' },
+                    { icon: '💰', text: 'Alerta de fraude detectado e bloqueado', time: '18 minutos atrás', status: 'success' },
+                    { icon: '📈', text: 'Modelo preditivo atualizado com novos dados', time: '23 minutos atrás', status: 'running' },
+                    { icon: '🔍', text: 'Auditoria de segurança finalizada - 100% compliant', time: '28 minutos atrás', status: 'success' }
+                ];
+                
+                this.init();
+            }
+
+            init() {
+                this.renderAgentPerformance();
+                this.renderActivity();
+                this.startRealTimeUpdates();
+                console.log('📊 PiranhaOps Analytics iniciado com sucesso!');
+            }
+
+            renderAgentPerformance() {
+                const chartContainer = document.getElementById('agent-performance-chart');
+                const maxTasks = Math.max(...this.agents.map(a => a.tasks));
+                
+                chartContainer.innerHTML = this.agents.map(agent => {
+                    const height = (agent.tasks / maxTasks) * 200; // Max height 200px
+                    return `
+                        <div class="performance-bar" 
+                             style="height: ${height}px; background: linear-gradient(180deg, ${agent.color} 0%, ${agent.color}80 100%);"
+                             data-value="${agent.tasks}">
+                            <div class="bar-label">${agent.name.split(' ')[0]}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderActivity() {
+                const activityList = document.getElementById('activity-list');
+                
+                activityList.innerHTML = this.activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.text}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                        <div class="activity-status status-${activity.status}">
+                            ${activity.status === 'success' ? '✓' : '⟳'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            changeDateRange(range) {
+                this.currentDateRange = range;
+                
+                // Update active button
+                document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                // Simulate data refresh
+                this.simulateDataRefresh();
+                console.log(`📅 Range alterado para: ${range}`);
+            }
+
+            simulateDataRefresh() {
+                // Simulate metric updates with smooth animation
+                const metricValues = document.querySelectorAll('.metric-value');
+                metricValues.forEach(value => {
+                    const currentValue = parseInt(value.textContent.replace(/[^\d]/g, ''));
+                    const variation = Math.floor(currentValue * (Math.random() * 0.1 - 0.05));
+                    const newValue = currentValue + variation;
+                    
+                    // Animate the change
+                    value.style.transform = 'scale(1.1)';
+                    value.style.color = 'var(--piranha-red)';
+                    
+                    setTimeout(() => {
+                        value.textContent = value.textContent.replace(/[\d,]+/, newValue.toLocaleString());
+                        value.style.transform = 'scale(1)';
+                        value.style.color = 'var(--text-primary)';
+                    }, 300);
+                });
+
+                // Refresh charts
+                this.renderAgentPerformance();
+                this.renderActivity();
+            }
+
+            refreshActivity() {
+                // Add new activity
+                const newActivities = [
+                    { icon: '🎯', text: 'Meta diária de carrinhos atingida - 100%', time: 'agora', status: 'success' },
+                    { icon: '⚡', text: 'Agente de recuperação otimizado - +15% eficiência', time: 'agora', status: 'running' },
+                    { icon: '📧', text: 'Campanha de email disparada - 1,247 destinatários', time: 'agora', status: 'running' }
+                ];
+                
+                const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
+                this.activities.unshift(randomActivity);
+                
+                // Keep only last 8 activities
+                if (this.activities.length > 8) {
+                    this.activities = this.activities.slice(0, 8);
+                }
+                
+                this.renderActivity();
+                
+                // Show feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅ Atualizado!';
+                button.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 1500);
+            }
+
+            startRealTimeUpdates() {
+                // Simulate real-time metric updates
+                setInterval(() => {
+                    // Randomly update one metric
+                    const metrics = document.querySelectorAll('.metric-value');
+                    const randomMetric = metrics[Math.floor(Math.random() * metrics.length)];
+                    
+                    const currentValue = parseInt(randomMetric.textContent.replace(/[^\d]/g, ''));
+                    const smallVariation = Math.floor(currentValue * (Math.random() * 0.02 - 0.01));
+                    const newValue = Math.max(0, currentValue + smallVariation);
+                    
+                    // Smooth animation
+                    randomMetric.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        randomMetric.textContent = randomMetric.textContent.replace(/[\d,]+/, newValue.toLocaleString());
+                        randomMetric.style.transform = 'scale(1)';
+                    }, 150);
+                }, 10000); // Update every 10 seconds
+
+                // Occasionally add new activity
+                setInterval(() => {
+                    if (Math.random() > 0.7) { // 30% chance
+                        this.refreshActivity();
+                    }
+                }, 30000); // Check every 30 seconds
+
+                console.log('⏰ Atualizações em tempo real iniciadas');
+            }
+        }
+
+        // Global functions
+        function changeDateRange(range) {
+            analytics.changeDateRange(range);
+        }
+
+        function refreshActivity() {
+            analytics.refreshActivity();
+        }
+
+        // Initialize analytics
+        let analytics;
+        document.addEventListener('DOMContentLoaded', () => {
+            analytics = new PiranhaAnalytics();
+        });
+    </script>
+</body>
+</html>

@@ -12,8 +12,6 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 import sqlite3
-import threading
-import time
 import logging
 
 # Configurar logging
@@ -30,9 +28,9 @@ from config.settings import Settings
 from config.metrics_library import (
     ALL_METRICS, MetricTier, MetricPhase, 
     get_executive_summary, get_metrics_by_phase,
-    get_current_value, generate_metric_summary,
-    alert_system
+    get_current_value
 )
+from ai_os.agent_monitor import get_agent_monitor
 
 class ExecutiveDashboard:
     """Dashboard executivo com métricas em tempo real"""
@@ -88,6 +86,46 @@ class ExecutiveDashboard:
             )
         """)
         
+        # Tabela de agentes e tasks (para monitoramento)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS agents (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                squad TEXT NOT NULL,
+                status TEXT NOT NULL,
+                current_task_id TEXT,
+                tasks_completed INTEGER DEFAULT 0,
+                tasks_failed INTEGER DEFAULT 0,
+                avg_quality_score REAL DEFAULT 0.0,
+                last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id TEXT PRIMARY KEY,
+                agent_id TEXT NOT NULL,
+                type TEXT NOT NULL,
+                description TEXT NOT NULL,
+                priority INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                payload TEXT,
+                result TEXT,
+                quality_score REAL DEFAULT 0.0,
+                execution_time_ms INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                started_at TIMESTAMP,
+                completed_at TIMESTAMP,
+                FOREIGN KEY (agent_id) REFERENCES agents(id)
+            )
+        """)
+        
+        # Índices para performance
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_agent_id ON tasks(agent_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_task_status ON tasks(status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_task_created ON tasks(created_at)")
+        
         conn.commit()
         conn.close()
     
@@ -123,134 +161,17 @@ class ExecutiveDashboard:
             return "Compliance"
         else:
             return "Strategic"
-    
-    def get_squad_status(self):
-        """Retorna status atualizado dos squads"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        # Status simulado dos squads
-        squads_data = [
-            {
-                "squad_id": "commercial",
-                "squad_name": "🎯 Commercial Squad",
-                "status": "active",
-                "tasks_today": 47,
-                "quality_score": 0.94,
-                "last_task": datetime.now(),
-                "agents_online": 3,
-                "agents": ["CartRecovery", "LeadScraper", "StockForecaster"],
-                "activities": [
-                    {"time": "14:32", "activity": "Recuperou carrinho €125.50", "priority": "normal"},
-                    {"time": "14:28", "activity": "Novo lead de estúdio detectado", "priority": "high"},
-                    {"time": "14:25", "activity": "Alerta de stock gerado", "priority": "medium"}
-                ]
-            },
-            {
-                "squad_id": "wholesale",
-                "squad_name": "🏭 Wholesale Squad",
-                "status": "active",
-                "tasks_today": 23,
-                "quality_score": 0.91,
-                "last_task": datetime.now(),
-                "agents_online": 3,
-                "agents": ["PartnerAutomation", "TierManager", "B2BOnboarding"],
-                "activities": [
-                    {"time": "14:30", "activity": "Parceiro Bronze → Silver", "priority": "high"},
-                    {"time": "14:15", "activity": "Novo parceiro aprovado", "priority": "high"},
-                    {"time": "14:00", "activity": "Onboarding B2B concluído", "priority": "normal"}
-                ]
-            },
-            {
-                "squad_id": "operational",
-                "squad_name": "⚙️ Operational Squad",
-                "status": "setup",
-                "tasks_today": 12,
-                "quality_score": 0.88,
-                "last_task": datetime.now(),
-                "agents_online": 2,
-                "agents": ["DHLAutomation", "CODReconciliation", "TimeTracker"],
-                "activities": [
-                    {"time": "14:20", "activity": "Processamento DHL automático", "priority": "normal"},
-                    {"time": "14:10", "activity": "Reconciliação COD", "priority": "medium"}
-                ]
-            },
-            {
-                "squad_id": "compliance",
-                "squad_name": "📋 Compliance Squad",
-                "status": "pending",
-                "tasks_today": 0,
-                "quality_score": 0.0,
-                "last_task": None,
-                "agents_online": 0,
-                "agents": ["InfarmedReporter", "RMAAutomation", "BankReconciliation"],
-                "activities": [
-                    {"time": "--", "activity": "Aguardando Fase 4", "priority": "low"}
-                ]
-            }
-        ]
-        
-        # Atualizar no banco
-        for squad in squads_data:
-            cursor.execute("""
-                INSERT OR REPLACE INTO squad_status 
-                (squad_id, squad_name, status, tasks_today, quality_score, last_task, agents_online, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                squad["squad_id"], squad["squad_name"], squad["status"],
-                squad["tasks_today"], squad["quality_score"], squad["last_task"],
-                squad["agents_online"], datetime.now()
-            ))
-        
-        conn.commit()
-        conn.close()
-        
-        return squads_data
-    
-    def get_recent_activities(self, limit: int = 10):
-        """Retorna atividades recentes"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            SELECT timestamp, squad, activity, details, priority
-            FROM activity_logs
-            ORDER BY timestamp DESC
-            LIMIT ?
-        """, (limit,))
-        
-        activities = cursor.fetchall()
-        conn.close()
-        
-        return [
-            {
-                "timestamp": row[0],
-                "squad": row[1],
-                "activity": row[2],
-                "details": row[3],
-                "priority": row[4]
-            }
-            for row in activities
-        ]
-    
-    def add_activity(self, squad: str, activity: str, details: str = "", priority: str = "normal"):
-        """Adiciona nova atividade ao log"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            INSERT INTO activity_logs (squad, activity, details, priority)
-            VALUES (?, ?, ?, ?)
-        """, (squad, activity, details, priority))
-        
-        conn.commit()
-        conn.close()
 
 # Rotas API
 @app.route('/')
 def dashboard():
     """Dashboard principal executivo"""
     return render_template('dashboard_executive.html')
+
+@app.route('/agents')
+def agents_monitor():
+    """Página de monitoramento de agentes"""
+    return render_template('agents_monitor.html')
 
 @app.route('/api/executive-summary')
 def executive_summary():
@@ -262,7 +183,7 @@ def executive_summary():
     dashboard.update_realtime_metrics()
     
     # Obter métricas classificadas
-    metrics_summary = generate_metric_summary()
+    metrics_summary = get_executive_summary()
     
     # Progresso por fase
     phase_progress = get_phase_progress()
@@ -288,7 +209,7 @@ def executive_summary():
     return jsonify({
         "timestamp": datetime.now().isoformat(),
         "overall_health": metrics_summary["overall_health_score"],
-        "metrics_by_tier": get_executive_summary(),
+        "metrics_by_tier": metrics_summary,
         "phase_progress": phase_progress,
         "recommendations": recommendations,
         "next_review": (datetime.now() + timedelta(hours=1)).isoformat(),
@@ -300,112 +221,181 @@ def executive_summary():
         }
     })
 
-@app.route('/api/squad/<squad_name>/status')
-def squad_status(squad_name):
-    """Status detalhado de um squad específico"""
-    dashboard = ExecutiveDashboard()
-    squads = dashboard.get_squad_status()
-    
-    squad = next((s for s in squads if s['squad_id'] == squad_name), None)
-    if not squad:
-        return jsonify({"error": "Squad não encontrado"}), 404
-    
-    # Adicionar métricas do squad
-    squad_metrics = []
-    if squad_name == "commercial":
-        metrics_ids = ["cart_recovery_rate", "cart_recovery_revenue_eur", "new_studios_per_week", "lead_response_time_minutes"]
-    elif squad_name == "wholesale":
-        metrics_ids = ["partner_conversion_rate", "wholesale_ltv_growth", "tier_upgrade_rate"]
-    else:
-        metrics_ids = []
-    
-    for metric_id in metrics_ids:
-        if metric_id in ALL_METRICS:
-            threshold = ALL_METRICS[metric_id]
-            current_value = get_current_value(metric_id)
-            tier = threshold.classify(current_value)
-            
-            squad_metrics.append({
-                "id": metric_id,
-                "name": metric_id.replace("_", " ").title(),
-                "current_value": current_value,
-                "target": threshold.target,
-                "unit": threshold.unit,
-                "tier": tier.value,
-                "trend": "up" if current_value > threshold.target * 0.95 else "down"
-            })
-    
-    squad["metrics"] = squad_metrics
-    squad["last_updated"] = datetime.now().isoformat()
-    
-    return jsonify(squad)
-
-@app.route('/api/squad/<squad_name>/metrics')
-def squad_metrics(squad_name):
-    """Métricas específicas por Squad"""
-    squad_metrics_map = {
-        "commercial": ["cart_recovery_rate", "cart_recovery_revenue_eur", "new_studios_per_week", "lead_response_time_minutes"],
-        "wholesale": ["partner_conversion_rate", "wholesale_ltv_growth", "tier_upgrade_rate"],
-        "operational": ["team_time_saved_hours_monthly", "manual_work_reduction_percentage", "dhl_processing_time_minutes"],
-        "compliance": ["rma_resolution_time_hours", "compliance_error_rate"]
-    }
-    
-    metrics = squad_metrics_map.get(squad_name, [])
-    result = []
-    
-    for metric_id in metrics:
-        if metric_id in ALL_METRICS:
-            threshold = ALL_METRICS[metric_id]
-            current_value = get_current_value(metric_id)
-            tier = threshold.classify(current_value)
-            
-            result.append({
-                "id": metric_id,
-                "name": metric_id.replace("_", " ").title(),
-                "current_value": current_value,
-                "target": threshold.target,
-                "unit": threshold.unit,
-                "tier": tier.value,
-                "trend": "up" if current_value > threshold.target * 0.95 else "down",
-                "last_updated": datetime.now().isoformat()
-            })
-    
-    return jsonify(result)
-
-@app.route('/api/metrics/<metric_id>/history')
-def metric_history(metric_id):
-    """Histórico temporal de uma métrica"""
-    # Retornar últimos 30 dias (simulado)
-    history = []
-    for i in range(30):
-        date = datetime.now() - timedelta(days=i)
-        # Valor simulado com tendência
-        base_value = ALL_METRICS[metric_id].target
-        trend_factor = 1 + (i * 0.01)  # Tendência crescente
-        noise = (hash(metric_id + str(i)) % 100 - 50) / 1000  # Ruído pequeno
-        value = base_value * trend_factor + noise
-        
-        history.append({
-            "date": date.isoformat(),
-            "value": round(value, 3),
-            "tier": ALL_METRICS[metric_id].classify(value).value
-        })
+@app.route('/api/agents')
+def api_agents():
+    """Retorna lista de agentes com status"""
+    monitor = get_agent_monitor()
+    agents = monitor.get_all_agents()
+    realtime_metrics = monitor.get_realtime_metrics()
     
     return jsonify({
-        "metric_id": metric_id,
-        "metric_name": metric_id.replace("_", " ").title(),
-        "history": list(reversed(history))
+        "agents": [{
+            "id": agent.id,
+            "name": agent.name,
+            "squad": agent.squad,
+            "status": agent.status.value,
+            "current_task_id": agent.current_task_id,
+            "tasks_completed": agent.tasks_completed,
+            "tasks_failed": agent.tasks_failed,
+            "avg_quality_score": agent.avg_quality_score,
+            "last_activity": agent.last_activity.isoformat(),
+            "created_at": agent.created_at.isoformat()
+        } for agent in agents],
+        "realtime_metrics": realtime_metrics,
+        "timestamp": datetime.now().isoformat()
     })
 
-@app.route('/api/activities')
-def recent_activities():
-    """Atividades recentes do sistema"""
-    dashboard = ExecutiveDashboard()
-    activities = dashboard.get_recent_activities(limit=15)
+@app.route('/api/agents/<agent_id>')
+def api_agent_detail(agent_id):
+    """Detalhes de um agente específico"""
+    monitor = get_agent_monitor()
+    agent = monitor.get_agent(agent_id)
+    
+    if not agent:
+        return jsonify({"error": "Agente não encontrado"}), 404
+    
+    # Obter tasks do agente
+    agent_tasks = monitor.get_agent_tasks(agent_id, limit=10)
     
     return jsonify({
-        "activities": activities,
+        "agent": {
+            "id": agent.id,
+            "name": agent.name,
+            "squad": agent.squad,
+            "status": agent.status.value,
+            "current_task_id": agent.current_task_id,
+            "tasks_completed": agent.tasks_completed,
+            "tasks_failed": agent.tasks_failed,
+            "avg_quality_score": agent.avg_quality_score,
+            "last_activity": agent.last_activity.isoformat(),
+            "created_at": agent.created_at.isoformat()
+        },
+        "metrics": {
+            "tasks_completed": agent.tasks_completed,
+            "tasks_failed": agent.tasks_failed,
+            "success_rate": (agent.tasks_completed / max(agent.tasks_completed + agent.tasks_failed, 1)) * 100,
+            "avg_quality": agent.avg_quality_score
+        },
+        "recent_tasks": [{
+            "id": task.id,
+            "type": task.type,
+            "description": task.description,
+            "status": task.status.value,
+            "quality_score": task.quality_score,
+            "execution_time_ms": task.execution_time_ms,
+            "created_at": task.created_at.isoformat(),
+            "completed_at": task.completed_at.isoformat() if task.completed_at else None
+        } for task in agent_tasks],
         "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/tasks/running')
+def api_running_tasks():
+    """Tasks em execução no momento"""
+    monitor = get_agent_monitor()
+    running_tasks = monitor.get_running_tasks()
+    
+    return jsonify({
+        "tasks": [{
+            "id": task.id,
+            "agent_id": task.agent_id,
+            "type": task.type,
+            "description": task.description,
+            "priority": task.priority.value,
+            "status": task.status.value,
+            "progress": 0,  # Será calculado no frontend
+            "started_at": task.started_at.isoformat() if task.started_at else None,
+            "quality_score": task.quality_score,
+            "estimated_duration_ms": 30000  # Estimativa de 30s
+        } for task in running_tasks],
+        "count": len(running_tasks),
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/tasks/recent')
+def api_recent_tasks():
+    """Tasks recentes (histórico)"""
+    limit = request.args.get('limit', 20, type=int)
+    filter_type = request.args.get('filter', 'all')
+    
+    monitor = get_agent_monitor()
+    recent_tasks = monitor.get_recent_tasks(limit)
+    
+    # Aplicar filtros
+    if filter_type == 'completed':
+        recent_tasks = [t for t in recent_tasks if t.status.value == 'completed']
+    elif filter_type == 'failed':
+        recent_tasks = [t for t in recent_tasks if t.status.value == 'failed']
+    elif filter_type == 'recent':
+        cutoff = datetime.now() - timedelta(hours=24)
+        recent_tasks = [t for t in recent_tasks if t.created_at > cutoff]
+    
+    return jsonify({
+        "tasks": [{
+            "id": task.id,
+            "agent_id": task.agent_id,
+            "type": task.type,
+            "description": task.description,
+            "priority": task.priority.value,
+            "status": task.status.value,
+            "quality_score": task.quality_score,
+            "execution_time_ms": task.execution_time_ms,
+            "created_at": task.created_at.isoformat(),
+            "completed_at": task.completed_at.isoformat() if task.completed_at else None
+        } for task in recent_tasks],
+        "count": len(recent_tasks),
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/tasks/agent/<agent_id>')
+def api_agent_tasks(agent_id):
+    """Tasks de um agente específico"""
+    limit = request.args.get('limit', 10, type=int)
+    
+    monitor = get_agent_monitor()
+    agent_tasks = monitor.get_agent_tasks(agent_id, limit)
+    
+    return jsonify({
+        "agent_id": agent_id,
+        "tasks": [{
+            "id": task.id,
+            "type": task.type,
+            "description": task.description,
+            "priority": task.priority.value,
+            "status": task.status.value,
+            "quality_score": task.quality_score,
+            "execution_time_ms": task.execution_time_ms,
+            "created_at": task.created_at.isoformat(),
+            "started_at": task.started_at.isoformat() if task.started_at else None,
+            "completed_at": task.completed_at.isoformat() if task.completed_at else None
+        } for task in agent_tasks],
+        "count": len(agent_tasks),
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/performance/analytics')
+def api_performance_analytics():
+    """Análise de performance das últimas 24 horas"""
+    hours = request.args.get('hours', 24, type=int)
+    
+    monitor = get_agent_monitor()
+    analytics = monitor.get_performance_analytics(hours)
+    
+    return jsonify(analytics)
+
+@app.route('/api/status')
+def api_status():
+    """Status geral do sistema"""
+    monitor = get_agent_monitor()
+    system_status = monitor.get_system_status()
+    
+    return jsonify({
+        "system": system_status,
+        "dashboard": {
+            "version": "3.0",
+            "status": "operational",
+            "last_update": datetime.now().isoformat()
+        }
     })
 
 @app.route('/api/update-time')
@@ -417,59 +407,19 @@ def update_time():
         "last_metrics_update": datetime.now().isoformat()
     })
 
-@app.route('/api/squad/<squad_name>/activities', methods=['POST'])
-def add_squad_activity(squad_name):
-    """Adiciona nova atividade de squad"""
-    data = request.get_json()
-    
-    dashboard = ExecutiveDashboard()
-    dashboard.add_activity(
-        squad=squad_name,
-        activity=data.get('activity', ''),
-        details=data.get('details', ''),
-        priority=data.get('priority', 'normal')
-    )
-    
-    return jsonify({"status": "success"})
-
-# WebSocket para atualizações em tempo real
-@socketio.on('subscribe_metrics')
-def handle_subscribe_metrics():
-    """Cliente se inscreve para atualizações de métricas"""
-    def send_updates():
-        while True:
-            socketio.sleep(5)  # Atualiza a cada 5 segundos
-            
-            # Coletar dados atualizados
-            summary = generate_metric_summary()
-            squad_status = ExecutiveDashboard().get_squad_status()
-            
-            data = {
-                "metrics_summary": summary,
-                "squad_status": squad_status,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            socketio.emit('metrics_update', data)
-    
-    # Iniciar thread para enviar atualizações
-    thread = threading.Thread(target=send_updates, daemon=True)
-    thread.start()
-
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("🦈 PIRANHAOPS AIOS v3.0 - DASHBOARD EXECUTIVO")
+    print("🤖 PIRANHAOPS AIOS v3.0 - AGENTES MONITOR")
     print("="*60)
-    print("🔗 URL: http://localhost:8083")
-    print("📡 API: http://localhost:8083/api/executive-summary")
-    print("🎯 Squad Status: http://localhost:8083/api/squad/commercial/status")
-    print("📊 Métricas: http://localhost:8083/api/metrics/cart_recovery_rate/history")
+    print("🔗 Dashboard Agentes: http://localhost:8083/agents")
+    print("📡 API Agentes: http://localhost:8083/api/agents")
+    print("📊 API Tasks: http://localhost:8083/api/tasks/running")
+    print("🎯 API Performance: http://localhost:8083/api/performance/analytics")
     print("="*60)
-    print("🚀 Dashboard executivo iniciado!")
-    print("   • Visualização em tempo real dos squads")
-    print("   • Métricas estratégicas classificadas automaticamente")
-    print("   • Atualização de horário automática")
-    print("   • Interface responsiva com Design System Piranha")
-    print("   • WebSocket para atualizações em tempo real")
+    print("🚀 Monitor de Agentes iniciado!")
+    print("   • Visualização em tempo real dos agentes")
+    print("   • Tasks em execução com progresso ao vivo")
+    print("   • Histórico completo com filtros")
+    print("   • WebSocket para atualizações instantâneas")
     
     app.run(debug=True, port=8083, host='0.0.0.0')

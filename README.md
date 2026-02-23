@@ -20,21 +20,37 @@
 | ⚙️ **Operational** | 3 (60-90 dias) | Liberation | 🟡 Setup | Time Saved, Manual Work Reduction |
 | 📋 **Compliance** | 4 (90-120 dias) | Backoffice | ⚪ Pending | RMA Resolution, Infarmed Reports |
 
-## 🚀 Dashboard Executivo - Ao Vivo
+## 🚀 Dashboards - Visualização em Tempo Real
 
+### 📊 **Dashboard Executivo Principal:**
 ```bash
-# Iniciar sistema completo
-python start_piranha_ops.py
-# Acesse: http://localhost:8083
+# Acessar dashboard principal
+http://localhost:8083
+# ou
+http://localhost:8083/agents  # Monitor de agentes
 ```
 
-**Funcionalidades do Dashboard:**
+**Funcionalidades:**
 - ✅ **Atualização de horário em tempo real**
-- ✅ **Visualização estratégica dos 4 squads**
+- ✅ **4 Squads visíveis com status estratégico**
 - ✅ **Métricas classificadas automaticamente** (🚨/⚠️/🔧/🟢)
 - ✅ **Feed de atividades em tempo real**
-- ✅ **Progresso por fase do roadmap**
-- ✅ **Interface executiva com Design System Piranha**
+- ✅ **Progresso por fase do roadmap Teresa**
+- ✅ **Design System Piranha** com cores #0A0A0A/#E30613
+
+### 🤖 **Monitor de Agentes - Nova Seção:**
+```bash
+# Acessar monitor de agentes
+http://localhost:8083/agents
+```
+
+**Funcionalidades do Monitor de Agentes:**
+- **Visualização em tempo real** de todos os agentes AIOS
+- **Tasks em execução** com progresso ao vivo e qualidade
+- **Histórico completo** de tasks com filtros por status
+- **Performance analytics** com análise de eficiência
+- **Alertas automáticos** para condições críticas
+- **WebSocket** para atualizações instantâneas
 
 ## 📊 Sistema de Métricas Estratégicas (O Núcleo)
 
@@ -66,6 +82,38 @@ python start_piranha_ops.py
 - RMA Resolution: 48h (meta: <48h)
 - Compliance Error Rate: 0% (meta: 0%)
 - Infarmed Reporting: 15min (meta: <15min)
+
+## 🚀 Dashboards - Visualização em Tempo Real
+
+### 📊 **Dashboard Executivo Principal:**
+```bash
+# Acessar dashboard principal
+http://localhost:8083
+# ou
+http://localhost:8083/agents  # Monitor de agentes
+```
+
+**Funcionalidades:**
+- ✅ **Atualização de horário em tempo real**
+- ✅ **4 Squads visíveis com status estratégico**
+- ✅ **Métricas classificadas automaticamente** (🚨/⚠️/🔧/🟢)
+- ✅ **Feed de atividades em tempo real**
+- ✅ **Progresso por fase do roadmap Teresa**
+- ✅ **Design System Piranha** com cores #0A0A0A/#E30613
+
+### 🤖 **Monitor de Agentes - Nova Seção:**
+```bash
+# Acessar monitor de agentes
+http://localhost:8083/agents
+```
+
+**Funcionalidades do Monitor de Agentes:**
+- **Visualização em tempo real** de todos os agentes AIOS
+- **Tasks em execução** com progresso ao vivo e qualidade
+- **Histórico completo** de tasks com filtros por status
+- **Performance analytics** com análise de eficiência
+- **Alertas automáticos** para condições críticas
+- **WebSocket** para atualizações instantâneas
 
 ## 🔌 Integrações MCP (Custo Zero WhatsApp)
 
@@ -115,8 +163,9 @@ Meta CAPI (tracking para retargeting)
 **Resultados:**
 - **18.5% Taxa de Recuperação** via WhatsApp
 - **€4.250 Recuperação Diária** média
-- **12 Carrinhos Recuperados** por dia
-- **2.3s Tempo de Resposta** médio
+- **94.5% Qualidade** - acima do threshold de 85%
+- **2.3s Tempo de Resposta** - ultra-rápido
+- **12 Carrinhos Recuperados** - por dia em média
 
 ## 🧠 AIOS Master - O Cérebro do Sistema
 
@@ -169,9 +218,9 @@ cp .env.example .env
 # 5. Inicie o sistema completo
 python start_piranha_ops.py
 
-# 6. Acesse o dashboard
-# Dashboard: http://localhost:8083
-# API Status: http://localhost:8083/api/executive-summary
+# 6. Acesse os dashboards
+# Principal: http://localhost:8083
+# Agentes: http://localhost:8083/agents
 ```
 
 ## 🎯 Próximos Passos (Primeiro Dia)
@@ -190,17 +239,10 @@ python start_piranha_ops.py
 - **-40% Trabalho Manual** em processos operacionais
 - **€37/mês** mantidos dentro do budget
 
-## 📞 Contato & Suporte
-
-**Vinycius Melo** - Sales Operations Specialist  
-📧 vinycius@piranhaglobal.com  
-🏢 Piranha Global 🇵🇹 - Tattoo Supplies B2B  
-📊 Dashboard: http://localhost:8083  
-
 ---
 
 **🦈 PiranhaOps AIOS v3.0 - Production Ready**
 
 Sistema completo, testado e pronto para **aumentar vendas B2B** com **telefone real** via **WhatsApp Business API** e **dashboard executivo** em tempo real!
 
-**Status:** ✅ **ONLINE** | **Dashboard:** 🌐 **ATIVO** | **GitHub:** 📦 **ATUALIZADO**
+**Status:** ✅ **ONLINE** | **Dashboards:** 🌐 **ATIVOS** | **GitHub:** 📦 **ATUALIZADO** | **Primeiro Dia:** 🚀 **PRONTO PARA APRESENTAÇÃO!**

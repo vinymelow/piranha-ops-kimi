@@ -1,0 +1,466 @@
+/* Estilos adicionais para visualização de agentes */
+
+/* Loading States */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.spinner-large {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(227, 6, 19, 0.3);
+    border-top: 3px solid var(--piranha-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Current Tasks */
+.current-task {
+    background: linear-gradient(135deg, var(--piranha-dark) 0%, rgba(227, 6, 19, 0.1) 100%);
+    border: 1px solid rgba(227, 6, 19, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.current-task:hover {
+    transform: translateX(4px);
+    border-color: rgba(227, 6, 19, 0.5);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.task-type {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.task-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.task-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.task-progress {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.task-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--piranha-red) 0%, #FF6B6B 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.task-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-agent {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.task-quality {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.quality-high {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.quality-medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+}
+
+.quality-low {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+/* Status Indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-running .status-dot {
+    background: var(--warning);
+}
+
+.status-online .status-dot {
+    background: var(--success);
+}
+
+.status-offline .status-dot {
+    background: var(--text-secondary);
+}
+
+/* Squad Agents */
+.squad-agents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.agent-badge {
+    background: rgba(227, 6, 19, 0.2);
+    color: var(--piranha-red);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.agent-badge:hover {
+    background: rgba(227, 6, 19, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Task History */
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.tasks-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--piranha-red);
+    margin: 0;
+    position: relative;
+}
+
+.tasks-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--piranha-red) 0%, #FF6B6B 100%);
+    border-radius: 2px;
+}
+
+.task-filters {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: rgba(227, 6, 19, 0.2);
+    border-color: rgba(227, 6, 19, 0.5);
+    color: var(--piranha-red);
+}
+
+.task-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.task-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.task-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.task-list::-webkit-scrollbar-thumb {
+    background: var(--piranha-red);
+    border-radius: 3px;
+}
+
+.task-item {
+    background: linear-gradient(135deg, var(--piranha-dark) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.task-item:hover {
+    border-color: rgba(227, 6, 19, 0.3);
+    transform: translateX(4px);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: pulse-dot 2s infinite;
+}
+
+.status-completed {
+    background: var(--success);
+}
+
+.status-failed {
+    background: var(--danger);
+}
+
+.status-running {
+    background: var(--warning);
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.empty-description {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Logo Animation */
+.logo-piranha {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: robot-float 3s ease-in-out infinite;
+}
+
+@keyframes robot-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .agents-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .tasks-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .task-filters {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .agent-metrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Connection Status */
+.connection-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--piranha-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.connection-online {
+    color: var(--success);
+}
+
+.connection-offline {
+    color: var(--danger);
+}
+
+/* Real-time Stats */
+#realtime-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Utility Classes */
+.mt-4 {
+    margin-top: 16px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--text-primary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Animation Enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Status Card Animations */
+@keyframes cardGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    50% { box-shadow: 0 4px 30px rgba(227, 6, 19, 0.2); }
+}
+
+.status-running {
+    animation: cardGlow 2s infinite;
+}
+
+/* Hover Effects */
+.card-hover-effect {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Quality Score Animation */
+@keyframes qualityPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.quality-high {
+    animation: qualityPulse 2s infinite;
+}
