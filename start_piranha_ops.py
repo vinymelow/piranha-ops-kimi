@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PiranhaOps AIOS v3.0 - Startup Script
+PiranhaOps AIOS v4.0 - Startup Script
 Inicializa sistema completo com verificações de saúde e auto-configuração
 Seguindo especificações do prompt estratégico completo
 """
@@ -34,7 +34,7 @@ sys.path.append(str(Path(__file__).parent))
 
 class PiranhaStartup:
     """
-    Sistema de inicialização e verificação do PiranhaOps AIOS v3.0
+    Sistema de inicialização e verificação do PiranhaOps AIOS v4.0
     Responsável por setup completo, validações e primeiro run
     """
     
@@ -172,7 +172,7 @@ class PiranhaStartup:
         env_example = Path(".env.example")
         
         if not env_file.exists() and not env_example.exists():
-            template = """# PiranhaOps AIOS v3.0 - Environment Configuration
+            template = """# PiranhaOps AIOS v4.0 - Environment Configuration
 
 # Copie para .env e preencha com valores reais
 
@@ -366,7 +366,7 @@ BUDGET_MONTHLY_EUR=37
         return f"{connected}/{len(servers)} MCP servers online"
 
     async def _init_squads(self):
-        """Inicializa os 4 Squads especializados"""
+        """Inicializa os 5 Squads Revenue Activation"""
         squads = {
             "commercial": {
                 "name": "🎯 Revenue Activation Squad",
@@ -412,7 +412,7 @@ BUDGET_MONTHLY_EUR=37
         """Cria arquivos do dashboard executivo"""
         # Criar CSS do Design System
         css_content = """
-/* Piranha Design System v3.0 */
+/* Piranha Design System v4.0 */
 :root {
     --piranha-black: #0A0A0A;
     --piranha-dark: #141414;
@@ -564,7 +564,7 @@ BUDGET_MONTHLY_EUR=37
         # Status final
         all_ok = all(success for _, success, _ in results)
         if all_ok:
-            print("\n🚀 PIRANHAOPS AIOS v3.0 - PRONTO PARA OPERAÇÃO")
+            print("\n🚀 PIRANHAOPS AIOS v4.0 - PRONTO PARA OPERAÇÃO")
             print("\n📍 Acessos:")
             print("   • Dashboard: http://localhost:8083")
             print("   • Logs: tail -f logs/piranha_ops.log")

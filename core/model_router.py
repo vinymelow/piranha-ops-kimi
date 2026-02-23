@@ -286,7 +286,7 @@ class ModelRouter:
         if stats['budget_remaining'] < 0.20:
             print("⚠️  ALERTA: Orçamento diário quase esgotado!")
         elif stats['projected_monthly'] > 40:
-            print("⚠️  ALERTA: Projeção mensal acima de €37! Considere otimizar.")
+            print("⚠️  ALERTA: Projeção mensal acima de €50! Considere otimizar.")
         elif stats['projected_monthly'] < 20:
             print("💡 DICA: Volume baixo, considere aumentar automações")
         

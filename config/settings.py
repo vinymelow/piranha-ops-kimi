@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Configuração Centralizada - PiranhaOps AIOS v3.0
+Configuração Centralizada - PiranhaOps AIOS v4.0
 Estrutura de configuração seguindo o prompt estratégico completo
 """
 
@@ -29,7 +29,7 @@ class ModelTier(Enum):
 @dataclass
 class Settings:
     """
-    Configuração centralizada do PiranhaOps AIOS v3.0
+    Configuração centralizada do PiranhaOps AIOS v4.0
     Seguindo especificações do prompt estratégico
     """
     
@@ -135,7 +135,7 @@ class Settings:
     AUTO_ESCALATE_QUALITY: float = 0.60  # Abaixo disso, escala para humano
     
     # ============================================================
-    # SEÇÃO 6: OTIMIZAÇÃO DE CUSTOS (€37/mês)
+    # SEÇÃO 6: OTIMIZAÇÃO DE CUSTOS (€50/mês - Revenue Activation)
     # ============================================================
     BUDGET_DAILY_USD: float = 1.00       # ~€0.93
     BUDGET_MONTHLY_EUR: float = 37.00

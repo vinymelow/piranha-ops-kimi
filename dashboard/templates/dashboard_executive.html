@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦈 PiranhaOps AIOS v3.0 - Executive Dashboard</title>
+    <title>🦈 PiranhaOps AIOS v4.0 - Revenue Activation Dashboard</title>
     <style>
-        /* Design System Piranha v3.0 - Especificações do Prompt Estratégico */
+        /* Design System Piranha v4.0 - Revenue Activation System */
         :root {
             --piranha-black: #0A0A0A;
             --piranha-dark: #141414;
@@ -494,7 +494,7 @@
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <div class="logo-piranha">🦈</div>
                     <div>
-                        <h1 style="font-size: 24px; font-weight: bold; color: var(--piranha-red); margin: 0;">PiranhaOps AIOS v3.0</h1>
+                        <h1 style="font-size: 24px; font-weight: bold; color: var(--piranha-red); margin: 0;">PiranhaOps AIOS v4.0</h1>
                         <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">Executive Dashboard</p>
                     </div>
                 </div>
@@ -532,7 +532,7 @@
 
         <!-- Squads Status -->
         <section class="mb-8">
-            <h2 class="section-title">🤖 Squads Ativos (AIOS)</h2>
+            <h2 class="section-title">🦈 Squads Revenue Activation (5 Especializados)</h2>
             <div id="squad-status">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -695,20 +695,18 @@
 
             async loadSquadStatus() {
                 try {
-                    // Carrega Commercial Squad primeiro
-                    const response = await fetch('/api/squad/commercial/status');
-                    const commercialData = await response.json();
+                    // Carrega todos os 5 squads Revenue Activation
+                    const squads = ['meta-ads', 'google-ads', 'inventory-pro', 'whatsapp', 'lead-scraper'];
+                    const squadData = [];
                     
-                    // Renderiza Commercial
-                    this.renderSquadCards([commercialData]);
-                    
-                    // Carrega outros squads
-                    const squads = ['wholesale', 'operational', 'compliance'];
                     for (const squad of squads) {
                         const resp = await fetch(`/api/squad/${squad}/status`);
-                        const squadData = await resp.json();
-                        this.renderSquadCards([squadData]);
+                        const data = await resp.json();
+                        squadData.push(data);
                     }
+                    
+                    // Renderiza todos os squads
+                    this.renderSquadCards(squadData);
                 } catch (error) {
                     console.error('Erro ao carregar status dos squads:', error);
                     this.showError('squad-status', 'Erro ao carregar squads');

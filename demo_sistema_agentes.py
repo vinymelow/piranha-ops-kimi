@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Demo do Sistema de Monitoramento de Agentes - PiranhaOps AIOS v3.0
+Demo do Sistema de Monitoramento de Agentes - PiranhaOps AIOS v4.0
 
 Este script demonstra o sistema completo de monitoramento de agentes em tempo real,
 mostrando as funcionalidades implementadas e os dados em tempo real.
@@ -202,7 +202,7 @@ class DemoAgentMonitor:
     
     def run_demo(self):
         """Executa demonstração completa do sistema"""
-        print("🤖 PiranhaOps AIOS v3.0 - Demo de Monitoramento de Agentes")
+        print("🤖 PiranhaOps AIOS v4.0 - Demo de Monitoramento de Agentes")
         print("=" * 80)
         print("📋 Funcionalidades demonstradas:")
         print("  ✅ Monitoramento em tempo real de agentes")

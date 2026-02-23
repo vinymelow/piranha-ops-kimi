@@ -1,8 +1,8 @@
-# 🤖 PiranhaOps AIOS v3.0 - Sistema de Monitoramento de Agentes
+# 🤖 PiranhaOps AIOS v4.0 - Sistema de Monitoramento de Agentes
 
 ## 📋 Visão Geral
 
-O sistema de monitoramento de agentes foi completamente implementado com sucesso, fornecendo uma solução robusta de visualização em tempo real para a plataforma PiranhaOps AIOS v3.0.
+O sistema de monitoramento de agentes foi completamente implementado com sucesso, fornecendo uma solução robusta de visualização em tempo real para a plataforma PiranhaOps AIOS v4.0.
 
 ## ✅ Funcionalidades Implementadas
 
@@ -127,7 +127,7 @@ O sistema está pronto para integração com:
 
 ## 🎯 Integrações Completadas
 
-### Dashboard v3.0
+### Dashboard v4.0
 - ✅ **Agent Monitor Section**: Seção completa de monitoramento
 - ✅ **Real-time Metrics**: Métricas ao vivo com cálculo automático
 - ✅ **Task Visualization**: Visualização de tasks com progresso
@@ -200,6 +200,6 @@ O sistema está pronto para integração com:
 
 **✅ Sistema de Monitoramento de Agentes - IMPLEMENTADO COM SUCESSO!**
 
-O PiranhaOps AIOS v3.0 agora possui um sistema completo de monitoramento de agentes com visualização em tempo real, proporcionando controle total sobre as operações automatizadas da plataforma.
+O PiranhaOps AIOS v4.0 agora possui um sistema completo de monitoramento de agentes com visualização em tempo real, proporcionando controle total sobre as operações automatizadas da plataforma.
 
 **🌐 Acesse agora:** http://localhost:8087/visualizacao_agentes.html

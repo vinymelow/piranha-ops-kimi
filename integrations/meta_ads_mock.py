@@ -1,6 +1,6 @@
 """
-Simulador de Meta Ads para desenvolvimento
-Gera dados realistas sem precisar de API key real
+Meta Ads Mock - Simulador para PiranhaOps AIOS v4.0
+Gera dados realistas de campanhas para Revenue Activation
 """
 
 import random

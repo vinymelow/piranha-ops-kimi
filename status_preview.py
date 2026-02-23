@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Status Preview - Mostra como está o PiranhaOps AIOS v2.0
+Status Preview - Mostra como está o PiranhaOps AIOS v4.0
 Executa verificações rápidas do sistema
 """
 
@@ -11,13 +11,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 def check_system_status():
     """Verifica status do sistema"""
     print("\n" + "="*60)
-    print("🦈 PIRANHAOPS AIOS v2.0 - STATUS PREVIEW")
+    print("🦈 PIRANHAOPS AIOS v4.0 - STATUS PREVIEW")
     print("="*60)
     
     # Verificar estrutura de arquivos
     required_dirs = [
-        'ai_os', 'squads/commercial', 'squads/operational', 
-        'squads/intelligence', 'mcp_servers', 'dashboard'
+        'ai_os', 'squads/meta-ads', 'squads/google-ads', 'squads/inventory-pro',
+        'squads/whatsapp', 'squads/lead-scraper', 'integrations', 'dashboard'
     ]
     
     print("\n📂 Verificando estrutura de arquivos:")
@@ -33,13 +33,12 @@ def check_system_status():
     # Verificar arquivos principais
     critical_files = [
         'ai_os/master.py',
-        'ai_os/task_manager.py',
-        'ai_os/memory_sinapse.py',
-        'squads/commercial/cart_recovery.py',
-        'mcp_servers/klaviyo_mcp.py',
-        'mcp_servers/shopify_mcp.py',
-        'mcp_servers/whatsapp_mcp.py',
-        'dashboard/server.py',
+        'ai_os/agent_monitor.py',
+        'orchestrator.py',
+        'integrations/meta_ads_mock.py',
+        'integrations/google_maps_mock.py',
+        'integrations/evolution_mock.py',
+        'dashboard/server_v3.py',
         'config/settings.py'
     ]
     

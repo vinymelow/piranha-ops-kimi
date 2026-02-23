@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AIOS Master Agent v3.0 - Artificial Intelligence Operating System
+AIOS Master Agent v4.0 - Revenue Activation System
 Orquestrador central do PiranhaOps seguindo especificações do prompt estratégico
 """
 
@@ -188,7 +188,7 @@ class MemorySinapse:
 
 class AIOSMaster:
     """
-    AIOS Master Agent v3.0
+    AIOS Master Agent v4.0
     Orquestrador central do PiranhaOps
     """
     
@@ -274,7 +274,7 @@ class AIOSMaster:
             model_tier = self._select_model_tier(request)
             self.logger.debug(f"🎯 Model tier selecionado: {model_tier.value}")
             
-            # 3. CHECK ORÇAMENTO (€37/mês)
+            # 3. CHECK ORÇAMENTO (€50/mês Revenue Activation)
             if not self._check_budget(model_tier):
                 self.logger.warning("⚠️ Orçamento próximo do limite, forçando Economy")
                 model_tier = ModelTier.ECONOMY
@@ -404,7 +404,7 @@ class AIOSMaster:
         return {
             "state": self.state.value,
             "uptime_seconds": (datetime.now() - self.started_at).total_seconds(),
-            "version": "AIOS v3.0",
+            "version": "AIOS v4.0",
             "metrics": self.metrics,
             "squads": await self._get_squads_status(),
             "mcp_servers": await self._check_mcp_servers(),

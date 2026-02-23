@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Dashboard Executive v3.0 - Interface Web em Tempo Real
+Dashboard Executive v4.0 - Revenue Activation Dashboard
 Visualização por Squads e Métricas Estratégicas com atualização de horário
 Seguindo especificações do prompt estratégico completo
 """
@@ -202,7 +202,7 @@ def executive_summary():
             "metric": "Cart Recovery Rate",
             "action": "Otimizar templates WhatsApp e timing de envio",
             "impact": "+15% receita recuperada",
-            "owner": "Commercial Squad"
+            "owner": "WhatsApp Squad"
         }
     ]
     
@@ -409,7 +409,7 @@ def update_time():
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("🤖 PIRANHAOPS AIOS v3.0 - AGENTES MONITOR")
+    print("🤖 PIRANHAOPS AIOS v4.0 - AGENTES MONITOR")
     print("="*60)
     print("🔗 Dashboard Agentes: http://localhost:8083/agents")
     print("📡 API Agentes: http://localhost:8083/api/agents")

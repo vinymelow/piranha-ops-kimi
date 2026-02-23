@@ -1,7 +1,7 @@
 # 📊 Comparativo: PiranhaOps Analytics vs Shopify Analytics
 
 ## 🎯 Objetivo
-Criar uma interface de analytics para o PiranhaOps AIOS v3.0 inspirada no design clean, moderno e funcional do Shopify Analytics, adaptando o design system da PiranhaOps.
+Criar uma interface de analytics para o PiranhaOps AIOS v4.0 inspirada no design clean, moderno e funcional do Shopify Analytics, adaptando o design system da PiranhaOps.
 
 ## 🎨 Elementos do Shopify Analytics que Inspiramos
 
